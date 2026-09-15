@@ -19,7 +19,7 @@ main{flex:1;padding:14px 14px calc(150px + env(safe-area-inset-bottom))}
 .view{display:none}
 .view.active{display:block;animation:fadein .18s ease}
 @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-nav.tabs{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs{background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
 nav.tabs button{flex:1;border:0;background:none;padding:8px 0 7px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-family:inherit}
 nav.tabs button.active{color:var(--blue);font-weight:700}
 nav.tabs button .ic{font-size:19px;line-height:1.15}
@@ -80,7 +80,8 @@ nav.tabs button .ic{font-size:19px;line-height:1.15}
 .msg.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:5px}
 .msg.ai{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px}
 .msg.sys{align-self:center;background:#f1f3f6;color:var(--sub);font-size:12px;border-radius:8px;max-width:95%;text-align:center}
-.inputbar{position:fixed;bottom:calc(56px + env(safe-area-inset-bottom));left:0;right:0;max-width:480px;margin:0 auto;display:flex;gap:8px;padding:9px 12px;background:rgba(244,245,247,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);z-index:15}
+.inputbar{display:flex;gap:8px;padding:9px 12px;margin-bottom:8px;background:rgba(244,245,247,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line)}
+#bottom-dock{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;z-index:20}
 .inputbar input{flex:1;border:1.5px solid var(--line);border-radius:11px;padding:10px 13px;font-size:14.5px;font-family:inherit;background:#fff;outline:none}
 .inputbar input:focus{border-color:var(--blue)}
 .inputbar button{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:0 17px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
@@ -259,18 +260,19 @@ details.sub[open] summary{margin-bottom:6px}
     </div>
   </main>
 
-  <div class="inputbar" id="inputbar">
-    <input id="chat-input" placeholder="说点什么…例如「练了上肢A」「体重72.5」" onkeydown="if(event.key==='Enter')sendChat()">
-    <button onclick="sendChat()">发送</button>
+  <div id="bottom-dock">
+    <div class="inputbar" id="inputbar">
+      <input id="chat-input" placeholder="说点什么…例如「练了上肢A」「体重 81」" onkeydown="if(event.key==='Enter')sendChat()">
+      <button onclick="sendChat()">发送</button>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button data-v="chat" class="active" onclick="switchView('chat')"><span class="ic">💬</span>对话</button>
+      <button data-v="dash" onclick="switchView('dash')"><span class="ic">📊</span>看板</button>
+      <button data-v="train" onclick="switchView('train')"><span class="ic">🏋️</span>训练</button>
+      <button data-v="diet" onclick="switchView('diet')"><span class="ic">🍚</span>饮食</button>
+      <button data-v="settings" onclick="switchView('settings')"><span class="ic">⚙️</span>设置</button>
+    </nav>
   </div>
-
-  <nav class="tabs" id="tabs">
-    <button data-v="chat" class="active" onclick="switchView('chat')"><span class="ic">💬</span>对话</button>
-    <button data-v="dash" onclick="switchView('dash')"><span class="ic">📊</span>看板</button>
-    <button data-v="train" onclick="switchView('train')"><span class="ic">🏋️</span>训练</button>
-    <button data-v="diet" onclick="switchView('diet')"><span class="ic">🍚</span>饮食</button>
-    <button data-v="settings" onclick="switchView('settings')"><span class="ic">⚙️</span>设置</button>
-  </nav>
 </div>
 <script>
 /* ===== 训练库（Matt课程减脂计划）====== */
@@ -1250,14 +1252,13 @@ function init() {
   const ci = document.getElementById('chat-input');
   if (ci && D.profile && D.profile.weight) ci.placeholder = '说点什么…例如「练了上肢A」「体重 ' + D.profile.weight + '」';
 }
-// 底部布局：输入栏精确让位于底部导航（含iPhone底部安全区），内容区留足滚动空间
+// 底部布局：内容区底部留白 = 底部停靠区实际高度（输入栏+导航，含iPhone安全区）
 function fixBottomLayout() {
-  const nav = document.getElementById('tabs'), ib = document.getElementById('inputbar'), m = document.querySelector('main');
-  if (!nav || !ib) return;
-  const nh = nav.offsetHeight;
-  if (!nh || nh < 20) return;
-  ib.style.bottom = nh + 'px';
-  if (m) m.style.paddingBottom = (nh + (ib.offsetHeight || 60) + 16) + 'px';
+  const dock = document.getElementById('bottom-dock'), m = document.querySelector('main');
+  if (!dock) return;
+  const dh = dock.offsetHeight;
+  if (!dh || dh < 40) return;
+  if (m) m.style.paddingBottom = (dh + 24) + 'px';
 }
 window.addEventListener('resize', fixBottomLayout);
 window.addEventListener('orientationchange', function () { setTimeout(fixBottomLayout, 200); });
@@ -1267,18 +1268,18 @@ init();
 if (window.visualViewport) {
   const vv = window.visualViewport;
   const fixBar = () => {
-    const ib = document.getElementById('inputbar');
+    const dock = document.getElementById('bottom-dock');
     const nav = document.getElementById('tabs');
-    if (!ib || !nav) return;
-    const base = parseFloat(ib.style.bottom) || 56;
+    if (!dock || !nav) return;
     const gap = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
     if (gap > 80) {
-      ib.style.transform = 'translateY(-' + Math.max(0, gap - base) + 'px)';
       nav.style.display = 'none';
+      dock.style.bottom = gap + 'px';
     } else {
-      ib.style.transform = '';
       nav.style.display = '';
+      dock.style.bottom = '';
     }
+    setTimeout(fixBottomLayout, 30);
   };
   vv.addEventListener('resize', fixBar);
   vv.addEventListener('scroll', fixBar);
