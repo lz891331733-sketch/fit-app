@@ -1251,6 +1251,26 @@ function init() {
 }
 init();
 
+// ==================== 手机键盘适配（键盘弹出时输入框跟随、隐藏底部导航） ====================
+if (window.visualViewport) {
+  const vv = window.visualViewport;
+  const fixBar = () => {
+    const ib = document.getElementById('inputbar');
+    const nav = document.getElementById('tabs');
+    if (!ib || !nav) return;
+    const gap = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    if (gap > 80) {
+      ib.style.transform = 'translateY(-' + Math.max(0, gap - 52) + 'px)';
+      nav.style.display = 'none';
+    } else {
+      ib.style.transform = '';
+      nav.style.display = '';
+    }
+  };
+  vv.addEventListener('resize', fixBar);
+  vv.addEventListener('scroll', fixBar);
+}
+
 </script>
 </body>
 </html>
