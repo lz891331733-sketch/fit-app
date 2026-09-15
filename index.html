@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>健身减脂智能体 v1.0</title>
+<title>健身减脂智能体 v1.1</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f4f5f7;--card:#fff;--ink:#1a1d23;--sub:#6b7280;--line:#e9ebef;--blue:#2563eb;--blue2:#eff4ff;--orange:#ea580c;--orange2:#fff4ec;--green:#16a34a;--green2:#effaf1;--red:#dc2626;--red2:#fef2f2;--purple:#7c3aed}
@@ -116,13 +116,16 @@ details.sub[open] summary{margin-bottom:6px}
 <body>
 <div id="app">
   <header class="app">
-    <div class="t1">健身减脂智能体<span class="badge">Matt课程版 v1.0</span></div>
+    <div class="t1">健身减脂智能体<span class="badge">Matt课程版 v1.1</span></div>
     <div class="t2" id="hdr-sub">每周四练 · 减脂计划 · 数据全部本地存储</div>
   </header>
 
   <main>
     <!-- ============ 对话 ============ -->
     <div id="view-chat" class="view active">
+      <div id="chat-setup-tip" class="notice" style="display:none;cursor:pointer" onclick="switchView('settings')">
+        🤖 <b>AI 教练未启用</b> —— 点这里去「设置」填一次 Key（30秒），之后就能自由问答、让它帮你分析训练和饮食
+      </div>
       <div class="quick" id="chat-quick"></div>
       <div class="card chatbox" id="chat-list" style="min-height:340px;display:flex;flex-direction:column;gap:10px"></div>
     </div>
@@ -714,7 +717,7 @@ const TRAINING = {
 const KEY = 'matt_fit_v1';
 const DEF = {
   profile: { weight: 81, height: 170, age: 32, bmr: 1717, deficit: 400, proteinPerKg: 1.5 },
-  bodyRecords: [], trainingRecords: [], foodRecords: {},
+  bodyRecords: [], trainingRecords: [], foodRecords: {}, chatLog: [],
   cycle: { start: null },
   settings: { apit: 'agnes', apiurl: 'https://api.agnes-ai.cn/v1', apikey: '', model: 'agnes-2.5-flash', gtoken: '', gistId: '' }
 };
@@ -726,6 +729,31 @@ function load() {
   D.settings = Object.assign({}, DEF.settings, D.settings || {});
 }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) {} }
+
+// ==================== 渠道预设 & 链接一键配置 ====================
+const PRESETS = {
+  deepseek: { apit: 'deepseek', apiurl: 'https://api.deepseek.com/v1', model: 'deepseek-flash' },
+  agnes: { apit: 'agnes', apiurl: 'https://api.agnes-ai.cn/v1', model: 'agnes-2.5-flash' }
+};
+function applyUrlConfig() {
+  let applied = null;
+  try {
+    const q = new URLSearchParams(location.search);
+    const p = q.get('p'), k = q.get('k');
+    if ((p && PRESETS[p]) || k) {
+      if (p && PRESETS[p]) Object.assign(D.settings, PRESETS[p]);
+      if (k) D.settings.apikey = k;
+      save();
+      applied = { preset: p || '', key: !!k };
+    }
+    if (location.search) { try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) {} }
+  } catch (e) {}
+  return applied;
+}
+function renderChatConfigTip() {
+  const el = document.getElementById('chat-setup-tip');
+  if (el) el.style.display = D.settings.apikey ? 'none' : 'block';
+}
 const DAYMAP = { 1: 'upper_a', 2: 'lower_a', 4: 'upper_b', 5: 'lower_b' };
 const ORDER = ['upper_a', 'lower_a', 'upper_b', 'lower_b'];
 const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -976,12 +1004,30 @@ function addMsg(role, text) {
   const el = document.getElementById('chat-list');
   const div = document.createElement('div');
   div.className = 'msg ' + role;
-  div.id = role === 'thinking' ? 'msg-thinking' : '';
   div.textContent = text;
   el.appendChild(div);
   const main = document.querySelector('main');
   setTimeout(() => { main.scrollTop = main.scrollHeight; }, 40);
+  if (!/thinking/.test(role)) {
+    pushChat(role === 'me' ? 'me' : (role === 'sys' ? 'sys' : 'ai'), text);
+  }
   return div;
+}
+function pushChat(role, text) {
+  (D.chatLog = D.chatLog || []).push({ role: role, text: text });
+  if (D.chatLog.length > 80) D.chatLog = D.chatLog.slice(-80);
+  save();
+}
+function restoreChat() {
+  const el = document.getElementById('chat-list');
+  (D.chatLog || []).slice(-40).forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + m.role;
+    div.textContent = m.text;
+    el.appendChild(div);
+  });
+  const main = document.querySelector('main');
+  setTimeout(() => { main.scrollTop = main.scrollHeight; }, 120);
 }
 function parseLocal(text) {
   const t = text.trim();
@@ -998,8 +1044,8 @@ function parseLocal(text) {
   if (!isQ) {
     m = t.match(/体重\s*([\d.]+)/);
     if (m) return { act: 'weight', v: parseFloat(m[1]) };
-    m = t.match(/吃(?:了)?\s*(早餐|早饭|午餐|午饭|晚餐|晚饭|加餐)?\s*(?:大约|约|大概)?\s*([\d]+)\s*(?:大卡|千卡|kcal|卡)?/);
-    if (m && m[2] && /吃/.test(t)) { const mm = { '早餐': '早餐', '早饭': '早餐', '午餐': '午餐', '午饭': '午餐', '晚餐': '晚餐', '晚饭': '晚餐', '加餐': '加餐' }; return { act: 'food', meal: mm[m[1]] || '加餐', kcal: parseFloat(m[2]) }; }
+    m = t.match(/吃(?:了)?\s*(早餐|早饭|午餐|午饭|中午|晚餐|晚饭|晚上|加餐|夜宵)?\s*(?:大约|约|大概)?\s*([\d]+)\s*(?:大卡|千卡|kcal|卡)?/);
+    if (m && m[2] && /吃/.test(t)) { const mm = { '早餐': '早餐', '早饭': '早餐', '午餐': '午餐', '午饭': '午餐', '中午': '午餐', '晚餐': '晚餐', '晚饭': '晚餐', '晚上': '晚餐', '加餐': '加餐', '夜宵': '加餐' }; return { act: 'food', meal: mm[m[1]] || '加餐', kcal: parseFloat(m[2]) }; }
   }
   if (/状态|汇总|总结/.test(t)) return { act: 'status' };
   if (/减脂要点|执行法/.test(t)) return { act: 'rules' };
@@ -1028,22 +1074,40 @@ async function sendChat() {
   addMsg('me', text);
   const local = parseLocal(text);
   if (local) {
-    if (local.act === 'checkin') { const t = TRAINING[local.type]; D.trainingRecords.push({ date: today(), type: local.type, name: t.name, calories: t.calories || 400 }); save(); renderAll(); addMsg('ai', `✓ 已打卡「${t.name}」，+${t.calories} kcal 已计入今日热量目标。今天练得怎么样？`); return; }
+    if (local.act === 'checkin') {
+      const t = TRAINING[local.type];
+      D.trainingRecords.push({ date: today(), type: local.type, name: t.name, calories: t.calories || 400 });
+      save(); renderAll();
+      addMsg('ai', `✓ 已打卡「${t.name}」，+${t.calories} kcal 已计入今日热量目标。`);
+      if (/[?？]|怎么|多少|啥|什么|要不要|需要|能不能|建议|咋/.test(text) && D.settings.apikey) { await aiRespond(text); }
+      return;
+    }
     if (local.act === 'weight') { const w = local.v; if (isNaN(w) || w <= 20 || w > 300) { addMsg('ai', '体重数值看起来不对，再试一次？例如「体重72.5」'); return; } const d = today(); const ex = D.bodyRecords.find(r => r.date === d); if (ex) ex.weight = w; else D.bodyRecords.push({ date: d, weight: w }); D.profile.weight = w; save(); renderAll(); addMsg('ai', `✓ 已记录体重 ${w} kg`); return; }
     if (local.act === 'food') { addFood(local.meal, local.kcal); addMsg('ai', `✓ 已记录 ${local.meal} ${local.kcal} kcal`); return; }
     if (local.act === 'status') { addMsg('ai', statusText()); return; }
     if (local.act === 'rules') { addMsg('ai', RULES_TEXT); return; }
   }
+  if (/练[了完]/.test(text)) {
+    addMsg('ai', '记哪个训练？说完整一点：\n· 练了上肢A（推+拉）\n· 练了下肢A（髋+膝）\n· 练了上肢B（胸肩背）\n· 练了下肢B（后链+蹲）');
+    return;
+  }
   if (!D.settings.apikey) {
     addMsg('ai', '还没配置 AI（设置→AI对话配置，支持 Agnes/DeepSeek）。\n\n先给你当前数据：\n\n' + statusText() + '\n这些指令随时可用：「练了上肢A」「体重72.5」「吃了午餐 600」「减脂要点」');
     return;
   }
+  await aiRespond(text);
+}
+async function aiRespond(text) {
   const th = addMsg('assistant thinking', '思考中…');
   try {
     const reply = await callAI(text);
     th.className = 'msg ai'; th.textContent = reply;
+    pushChat('ai', reply);
   } catch (e) {
-    th.className = 'msg ai'; th.textContent = '调用失败：' + (e.message || e) + '\n（检查设置里的 API 地址/Key/模型名）';
+    th.className = 'msg ai';
+    const em = (e && e.name === 'AbortError') ? '⏱ 请求超时（60秒没响应）—— 检查网络后重试' : ('调用失败：' + (e.message || e) + '\n（检查设置里的 API 地址/Key/模型名）');
+    th.textContent = em;
+    pushChat('ai', em);
   }
 }
 function buildSysPrompt() {
@@ -1058,24 +1122,29 @@ function buildSysPrompt() {
   ctx += `\n【减脂口径】每日赤字400-500；碳水100-120g；蛋白1.5g/kg；一顿无碳水；零食跟正餐；不要少吃多餐；减脂2-4周+缓冲1-2周。`;
   return `你是主人的专属健身教练+营养师，基于Matt肌肉训练课程体系（每周四练减脂计划）。${ctx}\n回答要简洁直接（手机屏幕），给结论和可执行建议，不啰嗦、不堆砌。涉及训练/饮食时严格按上述课程口径。`;
 }
+function fetchT(url, opts, ms) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms || 60000);
+  return fetch(url, Object.assign({}, opts, { signal: ctrl.signal })).finally(() => clearTimeout(timer));
+}
 async function callAI(text) {
   const s = D.settings;
   const sys = buildSysPrompt();
   if (s.apit === 'agnes') {
-    const r = await fetch(s.apiurl.replace(/\/$/, '') + '/responses', {
+    const r = await fetchT(s.apiurl.replace(/\/$/, '') + '/responses', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + s.apikey },
       body: JSON.stringify({ model: s.model, input: [{ role: 'system', content: sys }, { role: 'user', content: text }], max_output_tokens: 900 })
-    });
+    }, 60000);
     const j = await r.json();
     if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
     return extractAgnes(j);
   } else {
-    const r = await fetch(s.apiurl.replace(/\/$/, '') + '/chat/completions', {
+    const r = await fetchT(s.apiurl.replace(/\/$/, '') + '/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + s.apikey },
       body: JSON.stringify({ model: s.model, messages: [{ role: 'system', content: sys }, { role: 'user', content: text }], max_tokens: 900 })
-    });
+    }, 60000);
     const j = await r.json();
     if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
     return (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '(空回复)';
@@ -1161,22 +1230,24 @@ function clearAll() {
 
 // ==================== 初始化 ====================
 function renderAll() {
-  renderTrain(); renderDash(); renderDiet(); renderSettings();
+  renderTrain(); renderDash(); renderDiet(); renderSettings(); renderChatConfigTip();
   const tag = document.getElementById('hdr-sub');
   const lw = latestWeight();
   tag.textContent = (lw ? '当前 ' + lw + ' kg · ' : '') + '每周四练减脂计划 · Matt课程体系';
 }
 function init() {
   load();
+  const urlCfg = applyUrlConfig();
   const wd = new Date().getDay();
   curTrainDay = DAYMAP[wd] || 'upper_a';
   renderChatQuick();
   renderAll();
-  if (!D.bodyRecords.length && !D.trainingRecords.length) {
-    addMsg('sys', '👋 欢迎使用！训练计划已就绪（每周四练·Matt课程）。\n先去「设置」填一下身体参数；可以直接说「练了上肢A」「体重72.5」「吃了午餐 600」我来记录。');
+  if ((D.chatLog || []).length) {
+    restoreChat();
   } else {
-    addMsg('sys', '数据已加载。发送「今日状态」看我汇总。');
+    addMsg('sys', '👋 欢迎使用！训练计划已就绪（每周四练 · Matt课程）\n说「练了上肢A」打卡 · 「体重80.5」记体重 · 「吃了午餐 600」记饮食 · 「今日状态」看汇总');
   }
+  if (urlCfg && urlCfg.key) addMsg('sys', '✅ 已配置好 AI 教练（' + (D.settings.model || '') + '），随便聊两句试试～');
 }
 init();
 
