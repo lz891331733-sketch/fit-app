@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>健身减脂智能体 v1.1</title>
+<title>健身减脂智能体 v1.2</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f4f5f7;--card:#fff;--ink:#1a1d23;--sub:#6b7280;--line:#e9ebef;--blue:#2563eb;--blue2:#eff4ff;--orange:#ea580c;--orange2:#fff4ec;--green:#16a34a;--green2:#effaf1;--red:#dc2626;--red2:#fef2f2;--purple:#7c3aed}
@@ -117,7 +117,7 @@ details.sub[open] summary{margin-bottom:6px}
 <body>
 <div id="app">
   <header class="app">
-    <div class="t1">健身减脂智能体<span class="badge">Matt课程版 v1.1</span></div>
+    <div class="t1">健身减脂智能体<span class="badge">Matt课程版 v1.2</span></div>
     <div class="t2" id="hdr-sub">每周四练 · 减脂计划 · 数据全部本地存储</div>
   </header>
 
@@ -150,12 +150,18 @@ details.sub[open] summary{margin-bottom:6px}
           <div class="n"><div class="v" id="dash-bw-count">0</div><div class="l">记录次数</div></div>
         </div>
         <button class="btn ghost block sm" style="margin-top:10px" onclick="promptWeight()">+ 记录今日体重</button>
+        <div style="margin-top:12px"><canvas id="bw-chart" height="110" style="width:100%;height:110px;display:block"></canvas></div>
         <div id="dash-bw-list" style="margin-top:8px"></div>
       </div>
       <div class="card">
         <h3>本周训练</h3>
         <div class="weeks" id="dash-weeks"></div>
         <div class="tiny" style="margin-top:8px" id="dash-week-note"></div>
+      </div>
+      <div class="card">
+        <h3>训练打卡日历 <span class="r" id="dash-streak"></span></h3>
+        <div id="dash-heat"></div>
+        <div class="tiny" style="margin-top:7px">近 8 周 · 每格一天 · 绿色＝当天有训练 · 蓝框＝今天</div>
       </div>
       <div class="card">
         <h3>减脂周期</h3>
@@ -901,8 +907,84 @@ function renderDash() {
     c.innerHTML = `<div class="tiny" style="margin-bottom:9px">记录减脂周期，帮你盯住「2-4周后安排缓冲」的节奏。</div>
       <button class="btn primary sm" onclick="startCycle()">开始减脂周期（从今天算）</button>`;
   }
+  drawBwChart();
+  renderHeat();
 }
 function fmtD(dt) { return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'); }
+// ==================== 体重趋势曲线（canvas） ====================
+function drawBwChart() {
+  const cv = document.getElementById('bw-chart'); if (!cv) return;
+  const w = cv.clientWidth; if (!w) return;
+  const h = 110, dpr = window.devicePixelRatio || 1;
+  cv.width = w * dpr; cv.height = h * dpr;
+  const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  const rs = (D.bodyRecords || []).slice(-30);
+  if (rs.length < 2) {
+    ctx.fillStyle = '#9aa3b2'; ctx.font = '12px -apple-system,sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('记录 2 次以上体重后显示趋势曲线', w / 2, h / 2 + 4);
+    return;
+  }
+  const pad = { l: 10, r: 10, t: 16, b: 20 };
+  const ws = rs.map(r => r.weight);
+  let mn = Math.min.apply(null, ws), mx = Math.max.apply(null, ws);
+  if (mx - mn < 1) { const c0 = (mx + mn) / 2; mn = c0 - 0.5; mx = c0 + 0.5; }
+  const x = i => pad.l + (w - pad.l - pad.r) * (i / (rs.length - 1));
+  const y = v => pad.t + (h - pad.t - pad.b) * (1 - (v - mn) / (mx - mn));
+  ctx.strokeStyle = '#eef0f4'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 2; i++) { const yy = pad.t + (h - pad.t - pad.b) * i / 2; ctx.beginPath(); ctx.moveTo(pad.l, yy); ctx.lineTo(w - pad.r, yy); ctx.stroke(); }
+  ctx.beginPath();
+  rs.forEach((r, i) => { i ? ctx.lineTo(x(i), y(r.weight)) : ctx.moveTo(x(i), y(r.weight)); });
+  ctx.lineTo(x(rs.length - 1), h - pad.b); ctx.lineTo(x(0), h - pad.b); ctx.closePath();
+  const g = ctx.createLinearGradient(0, pad.t, 0, h - pad.b);
+  g.addColorStop(0, 'rgba(37,99,235,.16)'); g.addColorStop(1, 'rgba(37,99,235,0)');
+  ctx.fillStyle = g; ctx.fill();
+  ctx.beginPath();
+  rs.forEach((r, i) => { i ? ctx.lineTo(x(i), y(r.weight)) : ctx.moveTo(x(i), y(r.weight)); });
+  ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+  const li = rs.length - 1;
+  ctx.beginPath(); ctx.arc(x(li), y(rs[li].weight), 3.5, 0, 6.284); ctx.fillStyle = '#2563eb'; ctx.fill();
+  ctx.fillStyle = '#2563eb'; ctx.font = 'bold 11.5px -apple-system,sans-serif';
+  ctx.textAlign = 'right'; ctx.fillText(rs[li].weight + 'kg', x(li) - 5, y(rs[li].weight) - 7);
+  ctx.fillStyle = '#9aa3b2'; ctx.font = '10.5px -apple-system,sans-serif';
+  ctx.textAlign = 'left'; ctx.fillText(rs[0].date.slice(5), pad.l, h - 6);
+  ctx.textAlign = 'right'; ctx.fillText(rs[li].date.slice(5), w - pad.r, h - 6);
+}
+// ==================== 训练打卡日历（近8周热力图）+ 连续达标周 ====================
+function weekStart(offset) {
+  const now = new Date(); const dow = (now.getDay() + 6) % 7;
+  const mon = new Date(now); mon.setDate(now.getDate() - dow - offset * 7);
+  return mon;
+}
+function weeklyCount(offset) {
+  const mon = weekStart(offset), sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const a = fmtD(mon), b = fmtD(sun);
+  return D.trainingRecords.filter(r => r.date >= a && r.date <= b).length;
+}
+function calcStreak() {
+  let s = 0;
+  for (let i = 1; i <= 26; i++) { if (weeklyCount(i) >= 2) s++; else break; }
+  if (weeklyCount(0) >= 2) s++;
+  return s;
+}
+function renderHeat() {
+  const el = document.getElementById('dash-heat'); if (!el) return;
+  const mon = weekStart(7);
+  const counts = {};
+  D.trainingRecords.forEach(r => { counts[r.date] = (counts[r.date] || 0) + 1; });
+  let g = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">';
+  for (let i = 0; i < 56; i++) {
+    const dd = new Date(mon); dd.setDate(mon.getDate() + i);
+    const ds = fmtD(dd);
+    const n = counts[ds] || 0;
+    const isToday = ds === today();
+    g += '<div title="' + ds + (n ? ' · ' + n + '练' : '') + '" style="height:19px;border-radius:5px;background:' + (n ? '#16a34a' : '#eef0f4') + (isToday ? ';outline:2px solid #2563eb;outline-offset:1px' : '') + '"></div>';
+  }
+  g += '</div>';
+  el.innerHTML = g;
+  const st = calcStreak();
+  document.getElementById('dash-streak').textContent = st > 0 ? '🔥 连续 ' + st + ' 周达标' : '';
+}
 function startCycle() { D.cycle.start = today(); save(); renderDash(); toast('已开始减脂周期计时'); }
 function resetCycle() { if (confirm('重新开始减脂周期？')) { D.cycle.start = today(); save(); renderDash(); } }
 function promptWeight() {
@@ -1118,6 +1200,16 @@ function buildSysPrompt() {
   let ctx = `【用户数据】体重${lw ? lw + 'kg' : '未记录'}；今日热量目标${target}已吃${intake}还余${target - intake}kcal；今日训练消耗${burn}kcal；`;
   if (type) ctx += `今日应练${TRAINING[type].name}；`;
   if (D.cycle.start) { const wks = Math.floor((new Date() - new Date(D.cycle.start)) / (7 * 864e5)) + 1; ctx += `减脂周期第${wks}周；`; }
+  const recent = D.trainingRecords.slice(-8).reverse().map(r => r.date.slice(5) + ' ' + r.name).join('、');
+  if (recent) ctx += `\n【最近训练】${recent}；`;
+  if (D.bodyRecords.length >= 2) {
+    const f0 = D.bodyRecords[0], l0 = D.bodyRecords[D.bodyRecords.length - 1];
+    ctx += `\n【体重趋势】${f0.date} ${f0.weight}kg → ${l0.date} ${l0.weight}kg（共${(l0.weight - f0.weight).toFixed(1)}kg）；`;
+  }
+  const af = foodArr(d);
+  if (af.length) ctx += `\n【今日已吃】${af.map(f => f.meal + f.kcal + 'kcal').join('、')}；`;
+  const stk = calcStreak();
+  if (stk > 0) ctx += `\n【坚持】已连续 ${stk} 周达成每周≥2练；`;
   ctx += `\n【计划】每周四练：周一上肢A(推+拉)/周二下肢A(髋+膝+腹)/周四上肢B(胸肩背)/周五下肢B(后链+蹲+腹)。每动作3-4组×8-15次。`;
   ctx += `\n【减脂口径】每日赤字400-500；碳水100-120g；蛋白1.5g/kg；一顿无碳水；零食跟正餐；不要少吃多餐；减脂2-4周+缓冲1-2周。`;
   return `你是主人的专属健身教练+营养师，基于Matt肌肉训练课程体系（每周四练减脂计划）。${ctx}\n回答要简洁直接（手机屏幕），给结论和可执行建议，不啰嗦、不堆砌。涉及训练/饮食时严格按上述课程口径。`;
