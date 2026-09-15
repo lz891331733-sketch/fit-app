@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>健身减脂智能体 v1.0</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f4f5f7;--card:#fff;--ink:#1a1d23;--sub:#6b7280;--line:#e9ebef;--blue:#2563eb;--blue2:#eff4ff;--orange:#ea580c;--orange2:#fff4ec;--green:#16a34a;--green2:#effaf1;--red:#dc2626;--red2:#fef2f2;--purple:#7c3aed}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55}
+#app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
+header.app{background:#111827;color:#fff;padding:15px 18px 13px;position:sticky;top:0;z-index:10}
+header.app .t1{font-size:17px;font-weight:700;letter-spacing:.3px}
+header.app .t2{font-size:12px;opacity:.6;margin-top:2px}
+header.app .badge{display:inline-block;font-size:10px;background:rgba(255,255,255,.14);border-radius:6px;padding:1px 7px;margin-left:8px;vertical-align:2px;font-weight:400}
+main{flex:1;padding:14px 14px 90px}
+.view{display:none}
+.view.active{display:block;animation:fadein .18s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{flex:1;border:0;background:none;padding:8px 0 7px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-family:inherit}
+nav.tabs button.active{color:var(--blue);font-weight:700}
+nav.tabs button .ic{font-size:19px;line-height:1.15}
+.card{background:var(--card);border-radius:14px;padding:14px 15px;margin-bottom:12px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.card h3{font-size:15px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.card h3 .r{font-size:12px;color:var(--sub);font-weight:400}
+.kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.kv:last-child{border-bottom:0}
+.kv .k{color:var(--sub)}
+.kv .v{font-weight:600}
+.pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+.pill.blue{background:var(--blue2);color:var(--blue)}
+.pill.orange{background:var(--orange2);color:var(--orange)}
+.pill.green{background:var(--green2);color:var(--green)}
+.pill.gray{background:#f1f3f6;color:var(--sub)}
+.pill.red{background:var(--red2);color:var(--red)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:10px;font-size:14px;font-weight:600;padding:10px 16px;cursor:pointer;font-family:inherit;transition:filter .15s}
+.btn:active{filter:brightness(.93)}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.green{background:var(--green);color:#fff}
+.btn.ghost{background:#f1f3f6;color:var(--ink)}
+.btn.warn{background:var(--red2);color:var(--red)}
+.btn.block{width:100%}
+.btn.sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1.5px solid var(--line);background:#fff;border-radius:20px;padding:6px 14px;font-size:13px;color:var(--sub);cursor:pointer;font-family:inherit;font-weight:500}
+.chip.on{border-color:var(--blue);color:var(--blue);background:var(--blue2);font-weight:700}
+.ex{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin-bottom:10px}
+.ex .top{display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer;gap:8px}
+.ex .nm{font-weight:700;font-size:15px}
+.ex .meta{font-size:12.5px;color:var(--sub);margin-top:3px}
+.ex .ref{font-size:11.5px;color:#8a94a6;margin-top:3px}
+.ex .arrow{color:#c3c9d4;font-size:13px;transition:transform .2s;flex-shrink:0;padding-top:2px}
+.ex.open .arrow{transform:rotate(180deg)}
+.ex .detail{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.ex.open .detail{display:block}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px}
+.steps .st{background:#f7f8fa;border-radius:9px;padding:8px 7px;text-align:center}
+.steps .st .n{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:3px}
+.steps .st .k{font-size:10.5px;color:var(--sub);line-height:1.35}
+.dtl{font-size:13px;color:#4b5563;margin-bottom:4px}
+.dtl b{color:var(--ink)}
+.mis{background:var(--red2);border-radius:9px;padding:9px 11px;margin:9px 0;font-size:12.5px;color:#b91c1c}
+.mis div{margin:2px 0}
+.tipbox{background:var(--blue2);border-radius:9px;padding:9px 11px;font-size:12.5px;color:#1e40af}
+.prog{height:9px;background:#eef0f4;border-radius:6px;overflow:hidden;margin:8px 0 4px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,#3b82f6,#2563eb);border-radius:6px;transition:width .4s}
+.prog.orange i{background:linear-gradient(90deg,#fb923c,#ea580c)}
+.prog.green i{background:linear-gradient(90deg,#4ade80,#16a34a)}
+.nums{display:flex;gap:10px;margin:10px 0 2px}
+.nums .n{flex:1;background:#f7f8fa;border-radius:10px;padding:9px 6px;text-align:center}
+.nums .n .v{font-size:19px;font-weight:800}
+.nums .n .l{font-size:11px;color:var(--sub);margin-top:1px}
+.nums .n.blue .v{color:var(--blue)} .nums .n.orange .v{color:var(--orange)} .nums .n.green .v{color:var(--green)}
+.chatbox{display:flex;flex-direction:column;gap:10px}
+.msg{max-width:86%;padding:9px 13px;border-radius:14px;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.msg.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:5px}
+.msg.ai{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px}
+.msg.sys{align-self:center;background:#f1f3f6;color:var(--sub);font-size:12px;border-radius:8px;max-width:95%;text-align:center}
+.inputbar{position:fixed;bottom:52px;left:0;right:0;max-width:480px;margin:0 auto;display:flex;gap:8px;padding:9px 12px;background:rgba(244,245,247,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);z-index:15}
+.inputbar input{flex:1;border:1.5px solid var(--line);border-radius:11px;padding:10px 13px;font-size:14.5px;font-family:inherit;background:#fff;outline:none}
+.inputbar input:focus{border-color:var(--blue)}
+.inputbar button{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:0 17px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.quick{display:flex;gap:7px;overflow-x:auto;margin-bottom:11px;padding-bottom:2px}
+.quick::-webkit-scrollbar{display:none}
+.quick button{flex:0 0 auto;font-size:12px;border:1px solid var(--line);background:#fff;border-radius:16px;padding:5px 11px;color:var(--sub);cursor:pointer;font-family:inherit}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:12.5px;color:var(--sub);margin-bottom:4px;font-weight:500}
+.fld input,.fld select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;font-family:inherit;background:#fff;outline:none}
+.fld input:focus,.fld select:focus{border-color:var(--blue)}
+.fld .hint{font-size:11px;color:#9aa3b2;margin-top:3px}
+.weeks{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
+.weeks .d{background:#f7f8fa;border-radius:9px;padding:7px 2px;text-align:center}
+.weeks .d .dd{font-size:10.5px;color:var(--sub)}
+.weeks .d .ss{font-size:15px;margin-top:2px}
+.weeks .d.done{background:var(--green2)}
+.weeks .d.today{outline:2px solid var(--blue)}
+.foodlist{margin-top:8px}
+.foodrow{display:flex;justify-content:space-between;font-size:13.5px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.foodrow:last-child{border-bottom:0}
+.foodrow .del{color:#c3c9d4;cursor:pointer;padding:0 4px;font-size:12px}
+.empty{text-align:center;color:#9aa3b2;font-size:13px;padding:18px 0}
+.mark{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13.5px;color:#374151}
+.mark .dot{flex-shrink:0;width:20px;height:20px;border-radius:6px;background:var(--orange2);color:var(--orange);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.notice{background:var(--orange2);border:1px solid #fde3cd;border-radius:12px;padding:11px 13px;font-size:13px;color:#9a3412;margin-bottom:12px}
+.tiny{font-size:11.5px;color:#9aa3b2}
+details.sub{margin-top:8px;font-size:12.5px;color:var(--sub)}
+details.sub summary{cursor:pointer;color:var(--blue);font-weight:600;list-style:none}
+details.sub summary::-webkit-details-marker{display:none}
+details.sub[open] summary{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="app">
+    <div class="t1">健身减脂智能体<span class="badge">Matt课程版 v1.0</span></div>
+    <div class="t2" id="hdr-sub">每周四练 · 减脂计划 · 数据全部本地存储</div>
+  </header>
+
+  <main>
+    <!-- ============ 对话 ============ -->
+    <div id="view-chat" class="view active">
+      <div class="quick" id="chat-quick"></div>
+      <div class="card chatbox" id="chat-list" style="min-height:340px;display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+    <!-- ============ 看板 ============ -->
+    <div id="view-dash" class="view">
+      <div class="card">
+        <h3>今日热量 <span class="r" id="dash-date"></span></h3>
+        <div class="nums">
+          <div class="n blue"><div class="v" id="dash-target">--</div><div class="l">目标 kcal</div></div>
+          <div class="n orange"><div class="v" id="dash-intake">0</div><div class="l">已摄入</div></div>
+          <div class="n green"><div class="v" id="dash-left">--</div><div class="l">还可吃</div></div>
+        </div>
+        <div class="prog"><i id="dash-prog" style="width:0%"></i></div>
+        <div class="tiny" id="dash-formula"></div>
+      </div>
+      <div class="card">
+        <h3>体重 <span class="r" id="dash-bw-trend"></span></h3>
+        <div class="nums">
+          <div class="n blue"><div class="v" id="dash-weight">--</div><div class="l">最新 kg</div></div>
+          <div class="n"><div class="v" id="dash-bw-count">0</div><div class="l">记录次数</div></div>
+        </div>
+        <button class="btn ghost block sm" style="margin-top:10px" onclick="promptWeight()">+ 记录今日体重</button>
+        <div id="dash-bw-list" style="margin-top:8px"></div>
+      </div>
+      <div class="card">
+        <h3>本周训练</h3>
+        <div class="weeks" id="dash-weeks"></div>
+        <div class="tiny" style="margin-top:8px" id="dash-week-note"></div>
+      </div>
+      <div class="card">
+        <h3>减脂周期</h3>
+        <div id="dash-cycle"></div>
+      </div>
+    </div>
+
+    <!-- ============ 训练 ============ -->
+    <div id="view-train" class="view">
+      <div id="train-today"></div>
+      <div class="chips" id="train-chips"></div>
+      <div id="train-plan"></div>
+      <div class="card">
+        <h3>打卡记录 <span class="r" id="train-history-count"></span></h3>
+        <div id="train-history"></div>
+      </div>
+    </div>
+
+    <!-- ============ 饮食 ============ -->
+    <div id="view-diet" class="view">
+      <div class="card">
+        <h3>今日饮食 <span class="r" id="diet-date"></span></h3>
+        <div class="nums">
+          <div class="n blue"><div class="v" id="diet-target">--</div><div class="l">热量目标</div></div>
+          <div class="n orange"><div class="v" id="diet-intake">0</div><div class="l">已吃</div></div>
+          <div class="n green"><div class="v" id="diet-left">--</div><div class="l">还可吃</div></div>
+        </div>
+        <div class="prog orange"><i id="diet-prog" style="width:0%"></i></div>
+        <div style="display:flex;gap:8px;margin-top:11px">
+          <button class="btn primary sm" style="flex:1" onclick="promptFood('早餐')">+ 早餐</button>
+          <button class="btn primary sm" style="flex:1" onclick="promptFood('午餐')">+ 午餐</button>
+          <button class="btn primary sm" style="flex:1" onclick="promptFood('晚餐')">+ 晚餐</button>
+          <button class="btn ghost sm" style="flex:1" onclick="promptFood('加餐')">+ 加餐</button>
+        </div>
+        <div class="foodlist" id="diet-foodlist"></div>
+      </div>
+      <div class="card">
+        <h3>每日口径 <span class="r">Matt 课程原话数字</span></h3>
+        <div class="kv"><span class="k">每日热量赤字</span><span class="v">400-500 kcal（区间300-600）</span></div>
+        <div class="kv"><span class="k">碳水</span><span class="v">100-120 g/天（不低于100）</span></div>
+        <div class="kv"><span class="k">蛋白质</span><span class="v" id="diet-protein">1.5 g/kg 体重</span></div>
+        <div class="kv"><span class="k">脂肪</span><span class="v">0.5 g/kg 体重</span></div>
+        <div class="kv"><span class="k">周期</span><span class="v">减脂2-4周 → 缓冲1-2周</span></div>
+      </div>
+      <div class="card">
+        <h3>极简执行法 <span class="r">无脑版</span></h3>
+        <div class="mark"><span class="dot">1</span><span>一天3-4顿里，安排<b>一顿没有碳水</b>（让胰岛素回落）</span></div>
+        <div class="mark"><span class="dot">2</span><span>零食跟正餐<b>一起吃</b>（15-30分钟内），不要单独加餐</span></div>
+        <div class="mark"><span class="dot">3</span><span><b>不要少吃多餐</b>——这是最忌讳的</span></div>
+        <div class="mark"><span class="dot">4</span><span>碳水后置：把碳水放在训练前后吃</span></div>
+        <div class="mark"><span class="dot">5</span><span>一周四练的人：4个训练日每天凑400赤字，其余3天按身体感受来</span></div>
+        <div class="mark"><span class="dot">6</span><span>减3-5%体重就安排平台期（2周-1月）再继续，别一口气减10%+</span></div>
+        <details class="sub">
+          <summary>▸ 为什么这样有效（课程原理）</summary>
+          <div>减脂核心是<b>降低体脂设定值</b>，不是硬饿。高强度训练抑制食欲、控制胰岛素波动（一顿无碳水）、不频繁进食——都是在给身体调低"体脂恒温器"。靠抑制食欲硬减，死路一条。</div>
+        </details>
+      </div>
+    </div>
+
+    <!-- ============ 设置 ============ -->
+    <div id="view-settings" class="view">
+      <div class="card">
+        <h3>身体参数</h3>
+        <div class="fld"><label>当前体重 (kg)</label><input id="s-weight" type="number" step="0.1" placeholder="例如 66"></div>
+        <div class="fld"><label>身高 (cm)</label><input id="s-height" type="number" placeholder="例如 168"></div>
+        <div class="fld"><label>年龄</label><input id="s-age" type="number" placeholder="例如 32"></div>
+        <div class="fld"><label>基础代谢 BMR (kcal)</label><input id="s-bmr" type="number" placeholder="体脂秤实测值或按公式估算"><div class="hint">没有实测值可留空，看板按体重估算</div></div>
+        <div class="fld"><label>每日热量赤字 (kcal)</label><input id="s-deficit" type="number" placeholder="400"><div class="hint">课程推荐 400-500（区间300-600）</div></div>
+        <div class="fld"><label>蛋白系数 (g/kg)</label><input id="s-protein" type="number" step="0.1" placeholder="1.5"></div>
+        <button class="btn primary block" onclick="saveProfile()">保存参数</button>
+      </div>
+      <div class="card">
+        <h3>AI 对话配置 <span class="r">可选</span></h3>
+        <div class="fld"><label>渠道</label>
+          <select id="s-apit"><option value="agnes">Agnes（免费·国内）</option><option value="deepseek">DeepSeek</option><option value="custom">自定义（OpenAI兼容）</option></select>
+        </div>
+        <div class="fld"><label>API 地址</label><input id="s-apiurl" placeholder="https://api.agnes-ai.cn/v1"></div>
+        <div class="fld"><label>API Key</label><input id="s-apikey" type="password" placeholder="sk-..."></div>
+        <div class="fld"><label>模型名</label><input id="s-model" placeholder="agnes-2.5-flash"></div>
+        <div class="hint" style="margin-bottom:9px">Key 只存在你手机本地（localStorage），不会上传到任何地方。不填也能用「记录类」指令（体重/打卡/吃饭）。</div>
+        <button class="btn primary block" onclick="saveApi()">保存 API 配置</button>
+      </div>
+      <div class="card">
+        <h3>云同步 <span class="r">可选 · GitHub Gist</span></h3>
+        <div class="fld"><label>GitHub Token（勾选 gist 权限）</label><input id="s-gtoken" type="password" placeholder="ghp_..."></div>
+        <div class="hint" style="margin-bottom:9px">填好后点上传→数据存到你自己的私有 Gist；换手机时填同样的 Token 点下载即可恢复。</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" style="flex:1" onclick="syncUp()">☁️ 上传</button>
+          <button class="btn ghost" style="flex:1" onclick="syncDown()">⬇️ 下载恢复</button>
+        </div>
+        <div class="tiny" style="margin-top:7px" id="sync-status"></div>
+      </div>
+      <div class="card">
+        <h3>数据</h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" style="flex:1" onclick="exportData()">导出备份</button>
+          <button class="btn ghost" style="flex:1" onclick="importData()">导入恢复</button>
+        </div>
+        <button class="btn warn block" style="margin-top:9px" onclick="clearAll()">清空所有数据（危险）</button>
+        <div class="tiny" style="margin-top:8px">数据存在浏览器 local + 你的 Gist，本页面无服务器、无埋点。</div>
+      </div>
+    </div>
+  </main>
+
+  <div class="inputbar" id="inputbar">
+    <input id="chat-input" placeholder="说点什么…例如「练了上肢A」「体重72.5」" onkeydown="if(event.key==='Enter')sendChat()">
+    <button onclick="sendChat()">发送</button>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button data-v="chat" class="active" onclick="switchView('chat')"><span class="ic">💬</span>对话</button>
+    <button data-v="dash" onclick="switchView('dash')"><span class="ic">📊</span>看板</button>
+    <button data-v="train" onclick="switchView('train')"><span class="ic">🏋️</span>训练</button>
+    <button data-v="diet" onclick="switchView('diet')"><span class="ic">🍚</span>饮食</button>
+    <button data-v="settings" onclick="switchView('settings')"><span class="ic">⚙️</span>设置</button>
+  </nav>
+</div>
+<script>
+/* ===== 训练库（Matt课程减脂计划）====== */
+const TRAINING = {
+  upper_a: {
+    name: "上肢A（推+拉）",
+    muscles: "胸、肩、背、二头、三头",
+    calories: 400,
+    exercises: [
+      {
+        id: "rot_bench_press",
+        name: "交替哑铃旋转卧推",
+        target: "胸大肌",
+        sets: 4,
+        reps: "8-10（左右算一个）",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "平躺屈膝踩实，双手持哑铃于胸上方。一个手在上面不动，另一边手落下来；推直后不一定是一字，也可能是小A字，以自己肩关节顺畅为准。", key: "一个手等、一个手动" },
+          { name: "发力执行", desc: "落的时候转、起的时候推：一边落到底，推起来；推直交代干净，再换另一边。向上推时伴随肩内旋，可更好募集前锯肌。", key: "落转起推、交代干净" },
+          { name: "节奏要点", desc: "左右交替，左右算一个。不要着急——这边还没推直，另一边别急着下来。", key: "左右算一个、别抢拍" }
+        ],
+        mistakes: ["错误：还没落就先转、还没起就先转 → 主次弄反", "错误：抢拍贪快 → 一边没推直另一边就下来，全乱套"],
+        tips: "为什么选它：杠铃只有一条线、会卡压关节；哑铃能调角度顺应肩关节，还能调左右胸不对称。课程D3·一级动作。"
+      },
+      {
+        id: "rot_shoulder_press",
+        name: "交替哑铃旋转推",
+        target: "三角肌前中束",
+        sets: 4,
+        reps: "8-10（每边）",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "手找在手肘的里边（想象肩膀痒、挠一下正好在的位置）；肘尖朝斜外侧，不是撇成90度，大约肩胛平面斜往前。大臂一定是垂直立面。", key: "手肘里边、肘尖斜外" },
+          { name: "发力执行", desc: "发力点在手掌根，感觉往天花板上去给；给上去，它压着我下来。左右交替。带上旋转——走直线费劲，旋转符合人体发力角度。", key: "掌根发力、往天花板给" },
+          { name: "变化调整", desc: "严重圆肩推不到头顶时：屁股往前坐、做成上斜版本即可（功能差的用上斜，功能好的可以往后）。", key: "圆肩→上斜版本" }
+        ],
+        mistakes: ["错误：肘撇成90度 → 关节卡压、力走直线费劲", "错误：起始位找错（手不在手肘里边）→ 整条路径全错"],
+        tips: "它既是正式训练，又是功能修复——圆肩问题可直接用它来调。课程D5·一级。"
+      },
+      {
+        id: "reverse_grip_pulldown",
+        name: "反握下拉",
+        target: "背阔肌（垂直拉）",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "反手、掌心向后、与肩同宽握横杆（宽一点窄一点都可以）。圆肩驼背的：起始位置往后躺一点儿、微微仰一点头。", key: "反握肩宽、圆肩后躺" },
+          { name: "发力执行", desc: "发力点是手——匀速向下拉，拉满；发力点向上回，回到头。躯干可以自然跟着往后。", key: "手是发力点、向下拉" },
+          { name: "感觉要点", desc: "整个背部主观上是放松的——放松的是背的浅层，背的深层才能训练到。", key: "背放松、深层才练到" }
+        ],
+        mistakes: ["错误：肩胛骨不会动还硬拉 → 往后躺一点、拉时胳膊肘往外撇一点", "错误：腰先动、发力点后动 → 不是发力点主导"],
+        tips: "课程D1·一级。先把一级模式掌握，再进阶二级宽握、三级中握距。"
+      },
+      {
+        id: "seated_row",
+        name: "坐姿划船",
+        target: "背（水平拉）",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "坐稳握住把手。先明确哪儿发力：它拉我——它拉的方向就是发力点。", key: "它拉我→找发力点" },
+          { name: "发力执行", desc: "发力点先走：发力点往后，往后过程中身体跟着往后；往前回的时候身体跟着往前。背完全收满。", key: "发力点先走、背收满" },
+          { name: "版本选择", desc: "腰不动的版本（发力点走、腰不动、背收满）或腰跟着动的版本都可以。", key: "腰不动/跟着动都行" }
+        ],
+        mistakes: ["错误：发力点还没动，先往后仰腰 → 背练一辈子练不着", "错误：手臂主导拉扯 → 发力点没主导"],
+        tips: "课程D1。判断标准：只要是发力点先动，做成什么样都是对的。"
+      },
+      {
+        id: "db_curl_half",
+        name: "哑铃弯举 · 下半程",
+        target: "肱二头肌",
+        sets: 3,
+        reps: "10-15",
+        rest: "60秒",
+        beginnerWeight: "轻重量",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "站姿或坐姿持哑铃（掌心向前也行），举到与地面平行位置——这个位置已经收住了。", key: "只举到平行" },
+          { name: "发力执行", desc: "只做下半程：举一半，落；举一半，落。这半程是二头，上半程是小臂——所以别举高。", key: "只做下半程" },
+          { name: "找发力点", desc: "动作完成位置一放松，哑铃压着你下来——哑铃压你哪儿，就是哪儿发力。", key: "压哪儿=哪儿发力" }
+        ],
+        mistakes: ["错误：举太高做全程 → 上半程是小臂在使劲", "错误：练背长期徒手不用助力带 → 小臂抓握劲大，弯举就往小臂跑"],
+        tips: "课程D9。照这个模式练『绝对出不了错』，就下半程。"
+      },
+      {
+        id: "tricep_pushdown",
+        name: "三头下压 · 90度",
+        target: "肱三头肌（外侧头）",
+        sets: 3,
+        reps: "8-10",
+        rest: "60秒",
+        beginnerWeight: "轻重量",
+        advancedWeight: "递增组（三档）",
+        steps: [
+          { name: "起始姿势", desc: "大臂垂直地面、贴住身体，躯干往下趴一点。", key: "大臂垂直、躯干微趴" },
+          { name: "发力执行", desc: "从底下到90度幅度压下来——只练90度，不做全程（外侧头肌肉短，做全程就跑了）。", key: "只做90度" },
+          { name: "防抢力", desc: "轻重量、可做递增；肘伸时不要加肩伸——加肩伸十有八九往长头跑，长头会把所有力抢走。", key: "肘伸不加肩伸" }
+        ],
+        mistakes: ["错误：做全程 → 练到的就不是外侧头", "错误：肘伸时加肩伸 → 力全被长头抢走"],
+        tips: "课程D9。切记不要做颈后臂屈伸——它练长头，胳膊会显粗。"
+      }
+    ]
+  },
+  lower_a: {
+    name: "下肢A（髋+膝+腹）",
+    muscles: "臀、腿后侧、大腿前侧、腹",
+    calories: 430,
+    exercises: [
+      {
+        id: "one_db_deadlift",
+        name: "单哑铃硬拉",
+        target: "臀、腿后侧",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "一只哑铃竖着拿；两脚与胯同宽，脚尖来一点点外八字（一点点就够）。", key: "与胯同宽、微外八" },
+          { name: "发力执行", desc: "先做上下的关系——微微蹲一下；再做前后的关系——屁股往后顶，顶到臀没法再往后，然后站起来。", key: "上下一小步、屁股后顶" },
+          { name: "幅度标准", desc: "起落都在手指这个位置；向下、向后、站起来，就是一次。", key: "手指位起落" }
+        ],
+        mistakes: ["错误：顶的时候往下蹲 → 膝不是主动下蹲", "错误：超过『屁股不能再后移』继续下 → 练的就不是臀腿，是腰"],
+        tips: "课程D2·一级。别跳级直接上杠铃硬拉——跳级别腰疼是一定的。"
+      },
+      {
+        id: "hip_thrust",
+        name: "臀冲",
+        target: "上臀",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "自重/轻重量起步",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "背靠凳子（肩胛骨下角与凳边齐平）；脚等宽、与胯同宽，脚尖冲前；杠铃垫上垫子卡在骨盆上（压高一点——压低了穿过的是屁股中下）。", key: "肩胛齐凳边、垫子护骨盆" },
+          { name: "发力执行", desc: "下的时候它给我压下来，起的时候匀速往上顶，顶顶顶到头。", key: "匀速上顶到头" },
+          { name: "躯干节奏", desc: "躯干走『翘翘板式』——下落时躯干跟着走；下落拉开上臀，收缩本能就会往被拉开的位置走。", key: "翘翘板式、拉哪儿往哪儿走" }
+        ],
+        mistakes: ["错误：杠铃压得过低 → 练到屁股中下、上臀练不到", "错误：刻意外八字或用弹力带 → 瞎折腾"],
+        tips: "课程D2。核心：下落时拉的是哪儿，收缩就往哪儿走。"
+      },
+      {
+        id: "split_squat",
+        name: "交错蹲",
+        target: "大腿前侧（单腿）",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "徒手→轻重量",
+        advancedWeight: "扛杠铃/持哑铃加重",
+        steps: [
+          { name: "起始姿势", desc: "两脚并上：脚后跟不动，脚尖横着走一下、落下，竖着再来一下——两脚初始位置冲前。前脚为主。", key: "脚尖横竖两步摆位" },
+          { name: "发力执行", desc: "双手插腰（或负重），蹲下去、站起来。既是正式训练，也是纠正训练——能调髂骨旋前旋后、高低骨盆。", key: "蹲起、兼顾纠正" },
+          { name: "无痛原则", desc: "蹲时膝关节没事就蹲；不舒服就退到双侧蹲，再不行用倒蹬。8-12个，换边。", key: "膝不适就退阶" }
+        ],
+        mistakes: ["错误：主动找脚往下踩地 → 不需要（远固定动作）", "错误：纠结骨盆眨眼 → 不用管"],
+        tips: "课程D4·单腿一级。负重时杠铃压肩膀（不是颈椎）——所有蹲类动作注意力都在肩膀位置。"
+      },
+      {
+        id: "leg_press",
+        name: "腿举 · 倒蹬（一次半）",
+        target: "大腿（膝主导）",
+        sets: 3,
+        reps: "8-10（一次半）",
+        rest: "90秒",
+        beginnerWeight: "中等重量起步",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "上倒蹬器械；躯干固定不动，只动四肢。", key: "躯干不动、只动四肢" },
+          { name: "发力执行", desc: "脚底板把板蹬起来，再落下来——『我蹬它，它压我』。想上边受力多就把脚踩高一点；踩低了劲儿集中在腿中下。", key: "脚位调受力" },
+          { name: "进阶玩法", desc: "做『一次半』：一次全程＋一次下半程——倒蹬很适合练一次半。", key: "一次半" }
+        ],
+        mistakes: ["错误：躯干跟着动 → 应该只动四肢", "错误：脚位不分 → 想练上边却一直踩低"],
+        tips: "课程D4。膝盖不舒服时的退阶神器。"
+      },
+      {
+        id: "ab_combo_1",
+        name: "腹肌组合（旋转+卷腹）",
+        target: "腹内斜肌+腹直肌",
+        sets: 3,
+        reps: "各10-15",
+        rest: "组合间不休息",
+        beginnerWeight: "徒手→轻哑铃",
+        advancedWeight: "哑铃加重",
+        steps: [
+          { name: "起始姿势", desc: "一级哑铃旋转/转体：从退阶模式开始，先找幅度；坐姿卷腹：横着坐椅子、夹住哑铃（夹得住就行）。", key: "横坐椅子、夹哑铃" },
+          { name: "发力执行", desc: "旋转10-15个；一级做完不休息、马上接二级坐姿卷腹10-15个。坐姿卷腹：脚面往上给、躯干跟着走；落头往下落，不是往前落。", key: "一级接二级、不休息" },
+          { name: "节奏", desc: "先找幅度，有了幅度再找速度。", key: "先幅度后速度" }
+        ],
+        mistakes: ["错误：卷腹往前落头 → 应该往下落", "错误：竖着坐椅子 → 后期重量上不去、不稳定"],
+        tips: "课程D8。腹肌不追求大块，追硬度下的线条。"
+      }
+    ]
+  },
+  upper_b: {
+    name: "上肢B（胸肩背）",
+    muscles: "胸上束、肩、背、二头",
+    calories: 400,
+    exercises: [
+      {
+        id: "incline_bench",
+        name: "上斜卧推（宽/窄握）",
+        target: "胸大肌上束",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "上斜凳躺好握杆。宽握/窄握两个模式（宽窄是相对的，自己找）：宽握下落自然开肘、窄握自然夹肘——肘的角度由握距决定，不必刻意摆。", key: "握距定肘角" },
+          { name: "发力执行", desc: "推起来；放松让杆压着下来，落到下巴，不要再低。", key: "落下巴即止" },
+          { name: "幅度标准", desc: "幅度自己找：放松时看杆在哪儿即可。不要非触胸——非触胸肩全压坏。", key: "不追求触胸" }
+        ],
+        mistakes: ["错误：追求全程触胸 → 肩关节压坏", "错误：刻意纠结开肘/夹肘 → 由握距自然决定"],
+        tips: "课程D3。与平板杠铃平级；重量涨一阵子之后再选它。"
+      },
+      {
+        id: "db_fly",
+        name: "哑铃飞鸟",
+        target: "胸大肌（中缝）",
+        sets: 3,
+        reps: "12-15",
+        rest: "60秒",
+        beginnerWeight: "轻哑铃",
+        advancedWeight: "稳定后加重",
+        steps: [
+          { name: "起始姿势", desc: "平躺持哑铃于胸上方，掌心相对。记住：哑铃不是绳索——它只能往下给。", key: "哑铃只能往下给" },
+          { name: "发力执行", desc: "向下时自然而然往两边；向上时自然而然往里。不是还没往下呢、先往外撇。", key: "自然开合、不硬撇" },
+          { name: "安全要点", desc: "最低点时哑铃一定在手肘的里边——跑到错位处会掰肩、废肩关节。", key: "低位哑铃在手肘内侧" }
+        ],
+        mistakes: ["错误：还没下就先往外撇 → 顺序反了", "错误：最低点哑铃位置错位 → 掰肩"],
+        tips: "课程D3。上斜做上胸多、下斜凳做下胸多，可自行调整。"
+      },
+      {
+        id: "db_upright_row",
+        name: "哑铃提拉（递增组）",
+        target: "三角肌中束/后束",
+        sets: 3,
+        reps: "递增·每档10次",
+        rest: "60秒",
+        beginnerWeight: "中轻重量→加重（双递增）",
+        advancedWeight: "三递增",
+        steps: [
+          { name: "起始姿势", desc: "三个角度：30度偏后束、45度中后束都有、60度偏中束。从45度开始练。", key: "从45度开始" },
+          { name: "发力执行", desc: "提拉走直线（不是飞的弧线）；发力点往天花板上走，在上的过程中会自然而然往外。最高点时手一定在手肘的里边。", key: "走直线、发力点往上" },
+          { name: "组次安排", desc: "常规10-15个不够用，做递增：中轻重量10个→放回→换重一点的再做10个左右到力竭（双递增）；进阶可三递增。递增一般3组，不要4组。", key: "双递增、3组封顶" }
+        ],
+        mistakes: ["错误：手肘往两边撇 → 力搂死了、散了", "错误：做4组 → 太多、动作会跑"],
+        tips: "课程D5：推举是根基，练肩主打提拉。自己把哑铃放回架子（顺便多喘口气）。"
+      },
+      {
+        id: "lateral_raise",
+        name: "哑铃侧平举（递增）",
+        target: "三角肌中束",
+        sets: 3,
+        reps: "递增·轻→中等重量",
+        rest: "60秒",
+        beginnerWeight: "轻重量起步",
+        advancedWeight: "中等重量收尾到力竭",
+        steps: [
+          { name: "起始姿势", desc: "站姿持哑铃自然下垂；手肘微弯——不是从直臂开始（站好后往上『立』一下，手肘自然微弯）。", key: "手肘微弯起步" },
+          { name: "发力执行", desc: "想的是『发力点往上给，往上给』；最高点时手肘角度随动，让力臂变短。底下微直、上面微弯，三角肌上面才能收住。", key: "肘角随动、力臂变短" },
+          { name: "组次与角度", desc: "跟提拉一样做递增：轻重量→中等重量。站姿偏中束多；想要后束就俯一点。", key: "递增、俯身偏后束" }
+        ],
+        mistakes: ["错误：手肘锁死固定 → 最后收不满、到上面没劲", "错误：耸肩甩动借力 → 练不到中束"],
+        tips: "课程D5。肩部进阶顺序：推→提拉→飞，不能跳步。"
+      },
+      {
+        id: "wide_pulldown",
+        name: "宽握下拉",
+        target: "背阔肌（垂直拉）",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "宽握、尽量宽一点——不是固定的，在关节压力不大的情况下自己找。可微微仰一点头。", key: "宽握、自己找宽度" },
+          { name: "发力执行", desc: "往下拉、拉下来、回去；屈肘和肩胛骨都服务于发力点。", key: "服务于发力点" },
+          { name: "幅度标准", desc: "拉到下巴位置即可——手臂长的话到这个位置背已经收满；再往下肩胛骨就会翻，都是多余的。", key: "到下巴即止" }
+        ],
+        mistakes: ["错误：追求贴胸口 → 多余，会翻肩胛骨", "错误：套用『肩胛平面/60度』统一标准 → 幅度角度由发力点决定"],
+        tips: "课程D1·二级。动作完成位置一放松，自己就找着了。"
+      },
+      {
+        id: "one_db_row",
+        name: "单哑铃划船",
+        target: "背阔肌",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "一只手扶着台子（高度约与胯同宽，高一点低一点问题不大）；支撑手往肚脐中间位置摸、撑住；蹬地俯身、胳膊大概伸直。不做跪椅子上的版本。", key: "撑肚脐中央、不做跪姿" },
+          { name: "发力执行", desc: "起落、起落、起落——发力点主导。跟哑铃的距离自己调，太近会难受。", key: "起落发力点主导" },
+          { name: "圆肩调整", desc: "如果一拉就圆肩：把掌心微微往前转一点——别转过了，转过了肩膀不适。", key: "微转掌心修圆肩" }
+        ],
+        mistakes: ["错误：支撑手乱放 → 撑不稳、身体晃", "错误：掌心转过 → 肩不适"],
+        tips: "课程D2。台子高度自己舒服为准。"
+      },
+      {
+        id: "hammer_curl_combo",
+        name: "垂式弯举组合",
+        target: "肱二头肌+肱肌",
+        sets: 3,
+        reps: "各8-10（组合）",
+        rest: "60秒",
+        beginnerWeight: "轻重量",
+        advancedWeight: "单独做可上大重量",
+        steps: [
+          { name: "起始姿势", desc: "哑铃垂式弯举：掌心相对；举起来正好到小臂垂直立面（垂式是全程）。", key: "垂式=全程掌心相对" },
+          { name: "发力执行", desc: "举的时候大臂一定是随着动的；发力点往上，往上的过程中自然而然它就动了。", key: "大臂随动、发力点往上" },
+          { name: "组合做法", desc: "修线条组合：先做垂式8-10个，紧接着做掌心向前哑铃弯举半程8-10个，各8-10个成组。", key: "垂式+半程成组" }
+        ],
+        mistakes: ["错误：用杠铃（固定角度）→ 手腕可能不舒服", "错误：重量贪大 → 修线条应该轻重量"],
+        tips: "课程D9。二头是垂直拉、水平拉的『进阶』——先把基础模式重量做上去再追细节。"
+      }
+    ]
+  },
+  lower_b: {
+    name: "下肢B（髋后链+蹲+腹）",
+    muscles: "臀、腿后侧、下背、大腿、腹",
+    calories: 420,
+    exercises: [
+      {
+        id: "double_db_deadlift",
+        name: "双哑铃硬拉 + 髋外展",
+        target: "臀、腿后侧",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "双手各持一哑铃——不是竖着拿，是A字形（低头看形成一定角度，每个人不一样）。双的脚尖冲前（单的才外八字）。", key: "A字持铃、脚尖冲前" },
+          { name: "发力执行", desc: "膝盖弯是上下的关系；屁股往后顶是前后的关系；然后站起来。注意力在手上——动作完成位置一放松，哑铃往下坠手，不是坠腰。", key: "注意力在手上" },
+          { name: "幅度与头位", desc: "屁股没法往后了就别再往下。微微仰一点头（按自己颈椎角度来，不要仰到难受）。", key: "微仰头、别死守一条线" }
+        ],
+        mistakes: ["错误：注意力放臀上 → 错，注意力在手上", "错误：死守『脊柱一条线』 → 普通会员容易腰出错"],
+        tips: "课程D2·二级。加练髋外展（器械，如健身房有）：双递增——20kg×10→25-30kg×10到力竭。臀中小肌是耐力肌，适合递增。"
+      },
+      {
+        id: "lying_leg_curl",
+        name: "俯卧腿弯举",
+        target: "腿后侧",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻重量·先找发力点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "器械调整", desc: "先看器械轴——与膝关节轴共轴，关节就没有压力；膝盖底下卡住；小腿垫调到合适位置（短了调远一点）。", key: "轴与膝关节共轴" },
+          { name: "发力点", desc: "趴好。放松时圆柱子把位置往下勾下来的那个点，就是发力点——注意力放在这个点。", key: "放松时被勾的点=发力点" },
+          { name: "执行", desc: "这个点把器械顶起来，器械顶着这个点下去；不用管这个动作练哪。", key: "点顶器械、器械压点" }
+        ],
+        mistakes: ["错误：轴与膝关节不共轴 → 关节有压力", "错误：找不到发力点 → 用『放松时器械往下勾的点』来找"],
+        tips: "课程D2。器械不会用可以问旁边的人——大多数人都友善。"
+      },
+      {
+        id: "bulgarian_split_squat",
+        name: "保加利亚蹲",
+        target: "大腿、臀部（单腿四级）",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "徒手→持哑铃",
+        advancedWeight: "稳定后加重",
+        steps: [
+          { name: "找距离", desc: "两种方法：①坐骨在凳子边上、前腿伸直脚跟着地；②手搭屁股、屁股往后找凳子边（比刚才往后一点），脚跟着地。自己试哪个舒服。", key: "两种找位法" },
+          { name: "发力执行", desc: "站上去、前腿起来，手持哑铃，下去、起。哑铃是自由重量只能上下走——主观上只做上下；客观上躯干一定前倾（但别主动往前趴）。", key: "主观上下、客观前倾" },
+          { name: "判断标准", desc: "主观上下、客观无痛、关节顺滑，就行了。", key: "无痛+顺滑" }
+        ],
+        mistakes: ["错误：主动往前趴 → 错", "错误：照搬别人的角度 → 每个人腿长比例不同"],
+        tips: "课程D4·单腿四级。网上90%博主只是分享自己经验，不能直接照搬角度。"
+      },
+      {
+        id: "box_squat",
+        name: "厢式深蹲",
+        target: "大腿、臀",
+        sets: 4,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "徒手→轻重量",
+        advancedWeight: "稳定后加重",
+        steps: [
+          { name: "起始姿势", desc: "站距与肩宽，微微外八字。找一把椅子，不要贴着——小腿与椅子留一点距离就行（也别走老远，会坐不上）。", key: "留一点距离" },
+          { name: "发力执行", desc: "不是垂直往下坐，是往斜后坐——像回家开电视往沙发上坐，『坐下来就不起来了』。", key: "往斜后坐" },
+          { name: "协调", desc: "髋膝同步，不要强行保持躯干垂直。", key: "髋膝同步" }
+        ],
+        mistakes: ["错误：垂直往下坐 → 应该往斜后坐", "错误：强行保持躯干垂直 → 没必要"],
+        tips: "课程D4·二级。股骨长的人做箱式蹲更得劲——它不考验身体比例。"
+      },
+      {
+        id: "back_extension",
+        name: "山羊挺身",
+        target: "下背、臀、腿后侧",
+        sets: 3,
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "徒手/小片起步",
+        advancedWeight: "稳定后加难度",
+        steps: [
+          { name: "起始姿势", desc: "调椅子高低：卡在前面一摸有块骨头（髂前上棘）的位置——高点低点无所谓；脚后边顶住，注意安全。", key: "卡骨头位置、脚顶住" },
+          { name: "发力执行", desc: "不会发力就先拿小片做直臂版本：动作完成位置一放松，会拉你/坠你——那就是发力点。曲臂版本：身子起、同时拉，两者协同同时到位。", key: "给给给…落落落，协同" },
+          { name: "节奏", desc: "『给给给给给……落落落落落』——身子和拉的动作去协同。", key: "协同到位" }
+        ],
+        mistakes: ["错误：曲臂版本还没往上给、腰先顶 → 这就是错了", "错误：脚没顶住 → 不安全"],
+        tips: "课程D2。8到12次没毛病，后期再加难度。"
+      },
+      {
+        id: "ab_combo_2",
+        name: "腹肌组合（卷腹+绳索下拉）",
+        target: "腹直肌+腹外斜肌",
+        sets: 3,
+        reps: "各10-15",
+        rest: "组合间不休息",
+        beginnerWeight: "徒手→中等重量",
+        advancedWeight: "加重",
+        steps: [
+          { name: "起始姿势", desc: "坐姿卷腹：横坐椅子、夹住哑铃（可负重）；绳索下拉：绳索由高往低。", key: "横坐、绳索由高往低" },
+          { name: "发力执行", desc: "坐姿卷腹10-15（脚面往上给）；绳索下拉：膝关节也由高往低，动作完成位置做脊柱旋转、肩胛骨往下压。让手和躯干同时到最低、同时到最高。", key: "手与躯干同步到顶底" },
+          { name: "搭配逻辑", desc: "腹外斜不清晰时：先做三级（绳索）、再用中等重量做坐姿卷腹——先激活腹外斜，再走腹直肌。", key: "先激活腹外斜" }
+        ],
+        mistakes: ["错误：手还没动、身子先动 → 脊柱区没有抗阻", "错误：手和躯干不同步 → 不能同时到最低/最高"],
+        tips: "课程D8。组合推荐：一级+二级、二级+三级、一配三都行；不建议一二三全做（太花哨=强度不够）。"
+      }
+    ]
+  }
+};
+
+// ==================== 数据层 ====================
+const KEY = 'matt_fit_v1';
+const DEF = {
+  profile: { weight: 81, height: 170, age: 32, bmr: 1717, deficit: 400, proteinPerKg: 1.5 },
+  bodyRecords: [], trainingRecords: [], foodRecords: {},
+  cycle: { start: null },
+  settings: { apit: 'agnes', apiurl: 'https://api.agnes-ai.cn/v1', apikey: '', model: 'agnes-2.5-flash', gtoken: '', gistId: '' }
+};
+let D;
+function load() {
+  try { const s = localStorage.getItem(KEY); D = s ? Object.assign(JSON.parse(JSON.stringify(DEF)), JSON.parse(s)) : JSON.parse(JSON.stringify(DEF)); }
+  catch (e) { D = JSON.parse(JSON.stringify(DEF)); }
+  D.profile = Object.assign({}, DEF.profile, D.profile || {});
+  D.settings = Object.assign({}, DEF.settings, D.settings || {});
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(D)); } catch (e) {} }
+const DAYMAP = { 1: 'upper_a', 2: 'lower_a', 4: 'upper_b', 5: 'lower_b' };
+const ORDER = ['upper_a', 'lower_a', 'upper_b', 'lower_b'];
+const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+let curTrainDay = 'upper_a';
+function today() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+
+// ==================== 视图切换 ====================
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(e => e.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.v === v));
+  document.getElementById('inputbar').style.display = (v === 'chat') ? 'flex' : 'none';
+  if (v === 'dash') renderDash();
+  if (v === 'train') renderTrain();
+  if (v === 'diet') renderDiet();
+  if (v === 'settings') renderSettings();
+}
+
+// ==================== 轻提示 ====================
+let toastTimer = null;
+function toast(msg) {
+  let el = document.getElementById('_toast');
+  if (!el) { el = document.createElement('div'); el.id = '_toast'; el.style.cssText = 'position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 18px;border-radius:12px;font-size:13.5px;z-index:99;max-width:86%;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:opacity .25s;line-height:1.45'; document.body.appendChild(el); }
+  el.textContent = msg; el.style.opacity = '1';
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 2400);
+}
+
+// ==================== 热量/体重计算 ====================
+function bmrValue() { if (D.profile.bmr) return D.profile.bmr; if (D.profile.weight) return Math.round(D.profile.weight * 22); return 1500; }
+function todayBurn() { const d = today(); return D.trainingRecords.filter(r => r.date === d).reduce((a, b) => a + (b.calories || 0), 0); }
+function calcTarget() { return Math.round(bmrValue() + todayBurn() - (D.profile.deficit || 400)); }
+function foodArr(d) { return (D.foodRecords[d] || []); }
+function sumIntake(d) { return foodArr(d).reduce((a, b) => a + (b.kcal || 0), 0); }
+function latestWeight() { return D.bodyRecords.length ? D.bodyRecords[D.bodyRecords.length - 1].weight : D.profile.weight; }
+
+// ==================== 训练视图 ====================
+function renderTrain() {
+  const wd = new Date().getDay();
+  const todayType = DAYMAP[wd];
+  let h = '';
+  if (todayType) {
+    const t = TRAINING[todayType];
+    const done = D.trainingRecords.some(r => r.date === today() && r.type === todayType);
+    h = `<div class="card"><h3>今日训练 · ${t.name} <span class="r">${WD[wd]}</span></h3>
+      <div class="tiny">目标肌群：${t.muscles} · 预计消耗约 ${t.calories} kcal</div>
+      <div style="margin-top:11px">${done
+        ? '<button class="btn green block" disabled>✓ 今日已打卡</button>'
+        : `<button class="btn green block" onclick="doCheckin('${todayType}')">✓ 完成今日训练（打卡 +${t.calories} kcal）</button>`}</div>
+      <div class="tiny" style="margin-top:8px">练完打卡 → 今日热量目标自动上浮 → 看板/饮食页实时联动</div></div>`;
+  } else {
+    h = `<div class="card"><h3>今日休息 <span class="r">${WD[wd]}</span></h3>
+      <div class="tiny">好好恢复，给肌肉生长时间。可以散步或做轻度活动。</div></div>`;
+  }
+  document.getElementById('train-today').innerHTML = h;
+
+  document.getElementById('train-chips').innerHTML = ORDER.map(k =>
+    `<button class="chip ${curTrainDay === k ? 'on' : ''}" onclick="selTrainDay('${k}')">${TRAINING[k].name}</button>`).join('');
+
+  const t = TRAINING[curTrainDay];
+  let p = `<div class="card"><h3>${t.name} <span class="r">${t.muscles}</span></h3>
+    <div class="tiny" style="margin-bottom:11px">组次口径：每动作 3-4 组 × 8-15 次（腹肌/手臂 10-15 次）· 动作级别一级→三级递进 · 点卡片看要领</div>`;
+  t.exercises.forEach((ex, i) => {
+    p += `<div class="ex" id="ex-${i}">
+      <div class="top" onclick="toggleEx(${i})">
+        <div><div class="nm">${ex.name}</div>
+          <div class="meta">${ex.target} · ${ex.sets}组 × ${ex.reps} · 休息${ex.rest}</div>
+          <div class="ref">入门：${ex.beginnerWeight} ｜ 进阶：${ex.advancedWeight}</div></div>
+        <div class="arrow">▾</div>
+      </div>
+      <div class="detail">
+        <div class="steps">${ex.steps.map(s => `<div class="st"><div class="n">${s.name}</div><div class="k">${s.key}</div></div>`).join('')}</div>
+        ${ex.steps.map((s, j) => `<div class="dtl"><b>${j + 1}. ${s.name}：</b>${s.desc}</div>`).join('')}
+        <div class="mis">${ex.mistakes.map(m => `<div>⚠️ ${m}</div>`).join('')}</div>
+        <div class="tipbox">💡 ${ex.tips}</div>
+      </div>
+    </div>`;
+  });
+  p += `<div class="tiny" style="margin-top:4px">带 ★ 提示的动作如健身房的器械找不到，用同肌群动作替代即可</div></div>`;
+  document.getElementById('train-plan').innerHTML = p;
+
+  const hist = D.trainingRecords.slice().reverse().slice(0, 12);
+  document.getElementById('train-history-count').textContent = '共 ' + D.trainingRecords.length + ' 次';
+  document.getElementById('train-history').innerHTML = hist.length ? hist.map(r =>
+    `<div class="foodrow"><span>${r.date} <span class="pill blue">${r.name}</span></span><span style="color:#6b7280">+${r.calories} kcal</span></div>`).join('')
+    : '<div class="empty">还没有打卡记录</div>';
+}
+function selTrainDay(k) { curTrainDay = k; renderTrain(); }
+function toggleEx(i) { document.getElementById('ex-' + i).classList.toggle('open'); }
+function doCheckin(type) {
+  const t = TRAINING[type];
+  D.trainingRecords.push({ date: today(), type: type, name: t.name, calories: t.calories || 400 });
+  save(); renderAll();
+  toast(`✓ 已打卡「${t.name}」\n+${t.calories} kcal 已计入今日热量目标`);
+}
+
+// ==================== 看板 ====================
+function renderDash() {
+  const d = today();
+  document.getElementById('dash-date').textContent = d;
+  const target = calcTarget(), intake = sumIntake(d), left = target - intake;
+  document.getElementById('dash-target').textContent = target;
+  document.getElementById('dash-intake').textContent = intake;
+  document.getElementById('dash-left').textContent = left;
+  const pct = Math.min(100, Math.round(intake / Math.max(target, 1) * 100));
+  const prog = document.getElementById('dash-prog');
+  prog.style.width = pct + '%'; prog.parentElement.className = 'prog' + (pct >= 100 ? ' orange' : '');
+  document.getElementById('dash-formula').textContent = `BMR ${bmrValue()} + 今日训练 ${todayBurn()} - 赤字 ${D.profile.deficit || 400}` + (D.profile.bmr ? '' : '（BMR为估算值，建议去设置填实测）');
+
+  const lw = latestWeight();
+  document.getElementById('dash-weight').textContent = lw ? lw : '--';
+  document.getElementById('dash-bw-count').textContent = D.bodyRecords.length;
+  if (D.bodyRecords.length >= 2) {
+    const diff = (lw - D.bodyRecords[0].weight).toFixed(1);
+    document.getElementById('dash-bw-trend').textContent = (diff > 0 ? '+' : '') + diff + ' kg（对比首条）';
+  } else document.getElementById('dash-bw-trend').textContent = '';
+  const recent = D.bodyRecords.slice(-5).reverse();
+  document.getElementById('dash-bw-list').innerHTML = recent.map(r => `<div class="foodrow"><span>${r.date}</span><span>${r.weight} kg</span></div>`).join('');
+
+  const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  const now = new Date(); const dow = (now.getDay() + 6) % 7; // 0=周一
+  const monday = new Date(now); monday.setDate(now.getDate() - dow);
+  let wk = '';
+  for (let i = 0; i < 7; i++) {
+    const dd = new Date(monday); dd.setDate(monday.getDate() + i);
+    const ds = dd.getFullYear() + '-' + String(dd.getMonth() + 1).padStart(2, '0') + '-' + String(dd.getDate()).padStart(2, '0');
+    const has = D.trainingRecords.some(r => r.date === ds);
+    const isToday = ds === today();
+    wk += `<div class="d ${has ? 'done' : ''} ${isToday ? 'today' : ''}"><div class="dd">${days[i]}</div><div class="ss">${has ? '✅' : '·'}</div></div>`;
+  }
+  document.getElementById('dash-weeks').innerHTML = wk;
+  const weekCount = D.trainingRecords.filter(r => r.date >= fmtD(monday)).length;
+  document.getElementById('dash-week-note').textContent = `本周已打卡 ${weekCount} / 4 次`;
+
+  const c = document.getElementById('dash-cycle');
+  if (D.cycle.start) {
+    const wks = Math.floor((new Date() - new Date(D.cycle.start)) / (7 * 864e5)) + 1;
+    let note = wks <= 4 ? `建议第 2-4 周后安排 1-2 周缓冲（恢复正常吃练）` : `已超过 4 周——建议尽快安排缓冲周，避免代谢适应`;
+    c.innerHTML = `<div class="kv"><span class="k">减脂周期开始</span><span class="v">${D.cycle.start}</span></div>
+      <div class="kv"><span class="k">当前</span><span class="v">第 ${wks} 周</span></div>
+      <div class="notice" style="margin:9px 0 0">${note}</div>
+      <button class="btn ghost sm" style="margin-top:9px" onclick="resetCycle()">重新开始周期</button>`;
+  } else {
+    c.innerHTML = `<div class="tiny" style="margin-bottom:9px">记录减脂周期，帮你盯住「2-4周后安排缓冲」的节奏。</div>
+      <button class="btn primary sm" onclick="startCycle()">开始减脂周期（从今天算）</button>`;
+  }
+}
+function fmtD(dt) { return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'); }
+function startCycle() { D.cycle.start = today(); save(); renderDash(); toast('已开始减脂周期计时'); }
+function resetCycle() { if (confirm('重新开始减脂周期？')) { D.cycle.start = today(); save(); renderDash(); } }
+function promptWeight() {
+  const v = prompt('今日体重（kg）：', latestWeight() || '');
+  if (v === null) return;
+  const w = parseFloat(v);
+  if (isNaN(w) || w <= 20 || w > 300) return toast('请输入合理体重');
+  const d = today();
+  const exist = D.bodyRecords.find(r => r.date === d);
+  if (exist) exist.weight = w; else D.bodyRecords.push({ date: d, weight: w });
+  D.profile.weight = w;
+  save(); renderAll(); toast('已记录体重 ' + w + ' kg');
+}
+
+// ==================== 饮食 ====================
+function renderDiet() {
+  const d = today();
+  document.getElementById('diet-date').textContent = d;
+  const lw = latestWeight();
+  const pe = document.getElementById('diet-protein');
+  if (pe && lw) pe.textContent = `${D.profile.proteinPerKg} g/kg ≈ ${Math.round(lw * D.profile.proteinPerKg)} g/天`;
+  const target = calcTarget(), intake = sumIntake(d), left = target - intake;
+  document.getElementById('diet-target').textContent = target;
+  document.getElementById('diet-intake').textContent = intake;
+  document.getElementById('diet-left').textContent = left;
+  const pct = Math.min(100, Math.round(intake / Math.max(target, 1) * 100));
+  document.getElementById('diet-prog').style.width = pct + '%';
+  const arr = foodArr(d);
+  document.getElementById('diet-foodlist').innerHTML = arr.length ? arr.map((f, i) =>
+    `<div class="foodrow"><span>${f.meal}${f.note ? ' · ' + f.note : ''} <span class="tiny">${f.time || ''}</span></span>
+     <span>${f.kcal} kcal <span class="del" onclick="delFood(${i})">✕</span></span></div>`).join('')
+    : '<div class="empty">今天还没有饮食记录</div>';
+}
+function promptFood(meal) {
+  const v = prompt(`${meal} 热量（kcal）：`);
+  if (v === null) return;
+  const k = parseFloat(v);
+  if (isNaN(k) || k <= 0) return toast('请输入有效热量');
+  addFood(meal, k);
+}
+function addFood(meal, kcal, note) {
+  const d = today();
+  (D.foodRecords[d] = D.foodRecords[d] || []).push({ meal: meal, kcal: Math.round(kcal), note: note || '', time: new Date().toTimeString().slice(0, 5) });
+  save(); renderAll(); toast(`已记录 ${meal} ${Math.round(kcal)} kcal`);
+}
+function delFood(i) { const d = today(); D.foodRecords[d].splice(i, 1); save(); renderAll(); }
+
+// ==================== 设置 ====================
+function renderSettings() {
+  const p = D.profile, s = D.settings;
+  document.getElementById('s-weight').value = p.weight || '';
+  document.getElementById('s-height').value = p.height || '';
+  document.getElementById('s-age').value = p.age || '';
+  document.getElementById('s-bmr').value = p.bmr || '';
+  document.getElementById('s-deficit').value = p.deficit || 400;
+  document.getElementById('s-protein').value = p.proteinPerKg || 1.5;
+  document.getElementById('s-apit').value = s.apit;
+  document.getElementById('s-apiurl').value = s.apiurl || '';
+  document.getElementById('s-apikey').value = s.apikey || '';
+  document.getElementById('s-model').value = s.model || '';
+  document.getElementById('s-gtoken').value = s.gtoken || '';
+}
+function saveProfile() {
+  const g = id => document.getElementById(id).value.trim();
+  const n = v => v === '' ? null : parseFloat(v);
+  D.profile.weight = n(g('s-weight')) || D.profile.weight;
+  D.profile.height = n(g('s-height'));
+  D.profile.age = n(g('s-age'));
+  D.profile.bmr = n(g('s-bmr'));
+  D.profile.deficit = n(g('s-deficit')) || 400;
+  D.profile.proteinPerKg = n(g('s-protein')) || 1.5;
+  if (D.profile.weight && !D.bodyRecords.some(r => r.weight === D.profile.weight)) { /* 参数页体重不进记录 */ }
+  save(); renderAll(); toast('参数已保存');
+}
+function saveApi() {
+  D.settings.apit = document.getElementById('s-apit').value;
+  D.settings.apiurl = document.getElementById('s-apiurl').value.trim();
+  D.settings.apikey = document.getElementById('s-apikey').value.trim();
+  D.settings.model = document.getElementById('s-model').value.trim();
+  save(); toast('API 配置已保存');
+}
+document.addEventListener('change', e => {
+  if (e.target && e.target.id === 's-apit') {
+    const v = e.target.value;
+    const url = document.getElementById('s-apiurl'), md = document.getElementById('s-model');
+    if (v === 'agnes') { url.value = 'https://api.agnes-ai.cn/v1'; md.value = 'agnes-2.5-flash'; }
+    if (v === 'deepseek') { url.value = 'https://api.deepseek.com/v1'; md.value = 'deepseek-chat'; }
+  }
+});
+
+
+// ==================== 对话模块 ====================
+let chat = [];
+function renderChatQuick() {
+  const qs = ['练了上肢A', '练了下肢A', '体重 ', '今日状态', '减脂要点'];
+  document.getElementById('chat-quick').innerHTML = qs.map(q =>
+    `<button onclick="quickFill('${q}')">${q.trim() || q}</button>`).join('');
+}
+function quickFill(q) { const el = document.getElementById('chat-input'); el.value = q; el.focus(); }
+function addMsg(role, text) {
+  const el = document.getElementById('chat-list');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.id = role === 'thinking' ? 'msg-thinking' : '';
+  div.textContent = text;
+  el.appendChild(div);
+  const main = document.querySelector('main');
+  setTimeout(() => { main.scrollTop = main.scrollHeight; }, 40);
+  return div;
+}
+function parseLocal(text) {
+  const t = text.trim();
+  let m = t.match(/练[了完]\s*(上肢A|上肢a|下肢A|下肢a|上肢B|上肢b|下肢B|下肢b)/);
+  if (m) { const map = { '上肢a': 'upper_a', '下肢a': 'lower_a', '上肢b': 'upper_b', '下肢b': 'lower_b' }; return { act: 'checkin', type: map[m[1].toLowerCase()] }; }
+  if (/打卡|练完/.test(t) && /上肢|下肢/.test(t)) {
+    if (/上肢\s*A|上肢a/i.test(t)) return { act: 'checkin', type: 'upper_a' };
+    if (/下肢\s*A|下肢a/i.test(t)) return { act: 'checkin', type: 'lower_a' };
+    if (/上肢\s*B|上肢b/i.test(t)) return { act: 'checkin', type: 'upper_b' };
+    if (/下肢\s*B|下肢b/i.test(t)) return { act: 'checkin', type: 'lower_b' };
+  }
+  // 疑问句保护：带疑问特征的话不做"记录类"匹配，交给 AI / 状态兜底
+  const isQ = /[?？]|多少|怎么|为什么|吗|能不能|可不可以|建议|推荐|帮我算|算一下|够不够|超标/.test(t);
+  if (!isQ) {
+    m = t.match(/体重\s*([\d.]+)/);
+    if (m) return { act: 'weight', v: parseFloat(m[1]) };
+    m = t.match(/吃(?:了)?\s*(早餐|早饭|午餐|午饭|晚餐|晚饭|加餐)?\s*(?:大约|约|大概)?\s*([\d]+)\s*(?:大卡|千卡|kcal|卡)?/);
+    if (m && m[2] && /吃/.test(t)) { const mm = { '早餐': '早餐', '早饭': '早餐', '午餐': '午餐', '午饭': '午餐', '晚餐': '晚餐', '晚饭': '晚餐', '加餐': '加餐' }; return { act: 'food', meal: mm[m[1]] || '加餐', kcal: parseFloat(m[2]) }; }
+  }
+  if (/状态|汇总|总结/.test(t)) return { act: 'status' };
+  if (/减脂要点|执行法/.test(t)) return { act: 'rules' };
+  return null;
+}
+function statusText() {
+  const d = today();
+  const target = calcTarget(), intake = sumIntake(d), left = target - intake;
+  const burn = todayBurn();
+  const type = DAYMAP[new Date().getDay()];
+  const done = type && D.trainingRecords.some(r => r.date === d && r.type === type);
+  let s = `📊 今日状态（${d}）\n`;
+  s += `· 热量：目标 ${target} / 已吃 ${intake} / 还可吃 ${left} kcal\n`;
+  s += `· 训练消耗：${burn} kcal${burn ? '' : '（还没打卡）'}\n`;
+  s += type ? `· 今日训练：${TRAINING[type].name} ${done ? '✅ 已打卡' : '⏳ 未打卡'}\n` : `· 今日休息日\n`;
+  const lw = latestWeight(); if (lw) s += `· 最新体重：${lw} kg\n`;
+  if (D.cycle.start) { const wks = Math.floor((new Date() - new Date(D.cycle.start)) / (7 * 864e5)) + 1; s += `· 减脂周期：第 ${wks} 周\n`; }
+  return s;
+}
+const RULES_TEXT = `📋 减脂执行要点（Matt课程）\n1. 每日赤字 400-500 kcal（区间300-600）\n2. 碳水 100-120g/天（不低于100）；蛋白 1.5g/kg；脂肪 0.5g/kg\n3. 一天3-4顿里安排一顿无碳水（胰岛素回落）\n4. 零食跟正餐一起吃（15-30分钟内），不要单独加餐\n5. 最忌讳少吃多餐；碳水后置（训练前后吃）\n6. 减脂 2-4 周 → 缓冲 1-2 周（恢复吃练）\n7. 减 3-5% 体重就安排平台期，再继续\n8. 高强度训练本身就抑制食欲——坚持四练`;
+async function sendChat() {
+  const el = document.getElementById('chat-input');
+  const text = el.value.trim();
+  if (!text) return;
+  el.value = '';
+  addMsg('me', text);
+  const local = parseLocal(text);
+  if (local) {
+    if (local.act === 'checkin') { const t = TRAINING[local.type]; D.trainingRecords.push({ date: today(), type: local.type, name: t.name, calories: t.calories || 400 }); save(); renderAll(); addMsg('ai', `✓ 已打卡「${t.name}」，+${t.calories} kcal 已计入今日热量目标。今天练得怎么样？`); return; }
+    if (local.act === 'weight') { const w = local.v; if (isNaN(w) || w <= 20 || w > 300) { addMsg('ai', '体重数值看起来不对，再试一次？例如「体重72.5」'); return; } const d = today(); const ex = D.bodyRecords.find(r => r.date === d); if (ex) ex.weight = w; else D.bodyRecords.push({ date: d, weight: w }); D.profile.weight = w; save(); renderAll(); addMsg('ai', `✓ 已记录体重 ${w} kg`); return; }
+    if (local.act === 'food') { addFood(local.meal, local.kcal); addMsg('ai', `✓ 已记录 ${local.meal} ${local.kcal} kcal`); return; }
+    if (local.act === 'status') { addMsg('ai', statusText()); return; }
+    if (local.act === 'rules') { addMsg('ai', RULES_TEXT); return; }
+  }
+  if (!D.settings.apikey) {
+    addMsg('ai', '还没配置 AI（设置→AI对话配置，支持 Agnes/DeepSeek）。\n\n先给你当前数据：\n\n' + statusText() + '\n这些指令随时可用：「练了上肢A」「体重72.5」「吃了午餐 600」「减脂要点」');
+    return;
+  }
+  const th = addMsg('assistant thinking', '思考中…');
+  try {
+    const reply = await callAI(text);
+    th.className = 'msg ai'; th.textContent = reply;
+  } catch (e) {
+    th.className = 'msg ai'; th.textContent = '调用失败：' + (e.message || e) + '\n（检查设置里的 API 地址/Key/模型名）';
+  }
+}
+function buildSysPrompt() {
+  const d = today();
+  const target = calcTarget(), intake = sumIntake(d), burn = todayBurn();
+  const type = DAYMAP[new Date().getDay()];
+  const lw = latestWeight();
+  let ctx = `【用户数据】体重${lw ? lw + 'kg' : '未记录'}；今日热量目标${target}已吃${intake}还余${target - intake}kcal；今日训练消耗${burn}kcal；`;
+  if (type) ctx += `今日应练${TRAINING[type].name}；`;
+  if (D.cycle.start) { const wks = Math.floor((new Date() - new Date(D.cycle.start)) / (7 * 864e5)) + 1; ctx += `减脂周期第${wks}周；`; }
+  ctx += `\n【计划】每周四练：周一上肢A(推+拉)/周二下肢A(髋+膝+腹)/周四上肢B(胸肩背)/周五下肢B(后链+蹲+腹)。每动作3-4组×8-15次。`;
+  ctx += `\n【减脂口径】每日赤字400-500；碳水100-120g；蛋白1.5g/kg；一顿无碳水；零食跟正餐；不要少吃多餐；减脂2-4周+缓冲1-2周。`;
+  return `你是主人的专属健身教练+营养师，基于Matt肌肉训练课程体系（每周四练减脂计划）。${ctx}\n回答要简洁直接（手机屏幕），给结论和可执行建议，不啰嗦、不堆砌。涉及训练/饮食时严格按上述课程口径。`;
+}
+async function callAI(text) {
+  const s = D.settings;
+  const sys = buildSysPrompt();
+  if (s.apit === 'agnes') {
+    const r = await fetch(s.apiurl.replace(/\/$/, '') + '/responses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + s.apikey },
+      body: JSON.stringify({ model: s.model, input: [{ role: 'system', content: sys }, { role: 'user', content: text }], max_output_tokens: 900 })
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
+    return extractAgnes(j);
+  } else {
+    const r = await fetch(s.apiurl.replace(/\/$/, '') + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + s.apikey },
+      body: JSON.stringify({ model: s.model, messages: [{ role: 'system', content: sys }, { role: 'user', content: text }], max_tokens: 900 })
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error((j.error && j.error.message) || ('HTTP ' + r.status));
+    return (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '(空回复)';
+  }
+}
+function extractAgnes(j) {
+  if (!j) return '(空响应)';
+  if (j.output_text) return j.output_text;
+  if (Array.isArray(j.output)) { for (const o of j.output) { if (o && o.content) { for (const c of o.content) { if (c && c.text) return c.text; } } } }
+  if (j.text) return j.text;
+  if (j.reply) return j.reply;
+  return JSON.stringify(j).slice(0, 400);
+}
+
+// ==================== Gist 云同步 ====================
+async function syncUp() {
+  const t = document.getElementById('s-gtoken').value.trim();
+  if (!t) return toast('请先填 GitHub Token');
+  D.settings.gtoken = t; save();
+  const st = document.getElementById('sync-status'); st.textContent = '上传中…';
+  try {
+    const clean = JSON.parse(JSON.stringify(D)); clean.settings.gtoken = '';
+    const payload = { description: '健身减脂智能体数据备份', files: { 'fitdata.json': { content: JSON.stringify(clean) } } };
+    let url = 'https://api.github.com/gists', method = 'POST';
+    if (D.settings.gistId) { url = 'https://api.github.com/gists/' + D.settings.gistId; method = 'PATCH'; }
+    const r = await fetch(url, { method: method, headers: { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const j = await r.json();
+    if (j.id) { D.settings.gistId = j.id; save(); st.textContent = '✅ 已上传 ' + new Date().toTimeString().slice(0, 5) + ' · gist ' + j.id.slice(0, 10); toast('云端备份完成'); }
+    else st.textContent = '❌ 失败：' + (j.message || r.status);
+  } catch (e) { st.textContent = '❌ 网络错误：' + e.message; }
+}
+async function syncDown() {
+  const t = document.getElementById('s-gtoken').value.trim();
+  if (!t) return toast('请先填 GitHub Token');
+  if (!D.settings.gistId) return toast('本机没有云端记录ID，先在上传过数据的手机上备份时会生成');
+  const st = document.getElementById('sync-status'); st.textContent = '下载中…';
+  try {
+    const r = await fetch('https://api.github.com/gists/' + D.settings.gistId, { headers: { 'Authorization': 'Bearer ' + t, 'Accept': 'application/vnd.github+json' } });
+    const j = await r.json();
+    const f = j.files && j.files['fitdata.json'];
+    if (!f) return st.textContent = '❌ 云端没有数据文件';
+    if (!confirm('用云端数据覆盖本机数据？')) { st.textContent = ''; return; }
+    const cloud = JSON.parse(f.content);
+    const gid = D.settings.gistId; cloud.settings = Object.assign({}, cloud.settings || {}, { gtoken: t, gistId: gid });
+    D = cloud; save(); renderAll(); st.textContent = '✅ 已恢复 ' + new Date().toTimeString().slice(0, 5);
+  } catch (e) { st.textContent = '❌ ' + e.message; }
+}
+
+// ==================== 导出 / 导入 / 清空 ====================
+function exportData() {
+  const clean = JSON.parse(JSON.stringify(D)); clean.settings.gtoken = ''; clean.settings.gistId = '';
+  const blob = new Blob([JSON.stringify(clean, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = '健身数据备份_' + today() + '.json';
+  a.click();
+  toast('已导出备份文件');
+}
+function importData() {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.json,application/json';
+  inp.onchange = () => {
+    const f = inp.files[0]; if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const j = JSON.parse(rd.result);
+        if (!confirm('用备份文件覆盖本机数据？')) return;
+        const gid = D.settings.gistId, gtk = D.settings.gtoken;
+        D = Object.assign(JSON.parse(JSON.stringify(DEF)), j);
+        D.settings = Object.assign({}, DEF.settings, D.settings || {}, { gistId: gid, gtoken: gtk });
+        save(); renderAll(); toast('已从备份恢复');
+      } catch (e) { toast('文件格式不对：' + e.message); }
+    };
+    rd.readAsText(f);
+  };
+  inp.click();
+}
+function clearAll() {
+  if (!confirm('确定清空所有数据？此操作不可恢复！')) return;
+  if (!confirm('再确认一次：体重/训练/饮食记录都会删除')) return;
+  localStorage.removeItem(KEY); load(); renderAll(); toast('数据已清空');
+}
+
+// ==================== 初始化 ====================
+function renderAll() {
+  renderTrain(); renderDash(); renderDiet(); renderSettings();
+  const tag = document.getElementById('hdr-sub');
+  const lw = latestWeight();
+  tag.textContent = (lw ? '当前 ' + lw + ' kg · ' : '') + '每周四练减脂计划 · Matt课程体系';
+}
+function init() {
+  load();
+  const wd = new Date().getDay();
+  curTrainDay = DAYMAP[wd] || 'upper_a';
+  renderChatQuick();
+  renderAll();
+  if (!D.bodyRecords.length && !D.trainingRecords.length) {
+    addMsg('sys', '👋 欢迎使用！训练计划已就绪（每周四练·Matt课程）。\n先去「设置」填一下身体参数；可以直接说「练了上肢A」「体重72.5」「吃了午餐 600」我来记录。');
+  } else {
+    addMsg('sys', '数据已加载。发送「今日状态」看我汇总。');
+  }
+}
+init();
+
+</script>
+</body>
+</html>
