@@ -15,7 +15,7 @@ header.app{background:#111827;color:#fff;padding:15px 18px 13px;position:sticky;
 header.app .t1{font-size:17px;font-weight:700;letter-spacing:.3px}
 header.app .t2{font-size:12px;opacity:.6;margin-top:2px}
 header.app .badge{display:inline-block;font-size:10px;background:rgba(255,255,255,.14);border-radius:6px;padding:1px 7px;margin-left:8px;vertical-align:2px;font-weight:400}
-main{flex:1;padding:14px 14px 90px}
+main{flex:1;padding:14px 14px calc(150px + env(safe-area-inset-bottom))}
 .view{display:none}
 .view.active{display:block;animation:fadein .18s ease}
 @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -80,7 +80,7 @@ nav.tabs button .ic{font-size:19px;line-height:1.15}
 .msg.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:5px}
 .msg.ai{align-self:flex-start;background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px}
 .msg.sys{align-self:center;background:#f1f3f6;color:var(--sub);font-size:12px;border-radius:8px;max-width:95%;text-align:center}
-.inputbar{position:fixed;bottom:52px;left:0;right:0;max-width:480px;margin:0 auto;display:flex;gap:8px;padding:9px 12px;background:rgba(244,245,247,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);z-index:15}
+.inputbar{position:fixed;bottom:calc(56px + env(safe-area-inset-bottom));left:0;right:0;max-width:480px;margin:0 auto;display:flex;gap:8px;padding:9px 12px;background:rgba(244,245,247,.96);backdrop-filter:blur(6px);border-top:1px solid var(--line);z-index:15}
 .inputbar input{flex:1;border:1.5px solid var(--line);border-radius:11px;padding:10px 13px;font-size:14.5px;font-family:inherit;background:#fff;outline:none}
 .inputbar input:focus{border-color:var(--blue)}
 .inputbar button{border:0;background:var(--blue);color:#fff;border-radius:11px;padding:0 17px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
@@ -716,7 +716,7 @@ const TRAINING = {
 // ==================== 数据层 ====================
 const KEY = 'matt_fit_v1';
 const DEF = {
-  profile: { weight: 81, height: 170, age: 32, bmr: 1717, deficit: 400, proteinPerKg: 1.5 },
+  profile: { weight: 81, height: 170, age: 31, bmr: 1723, deficit: 400, proteinPerKg: 1.5 },
   bodyRecords: [], trainingRecords: [], foodRecords: {}, chatLog: [],
   cycle: { start: null },
   settings: { apit: 'agnes', apiurl: 'https://api.agnes-ai.cn/v1', apikey: '', model: 'agnes-2.5-flash', gtoken: '', gistId: '' }
@@ -1006,8 +1006,7 @@ function addMsg(role, text) {
   div.className = 'msg ' + role;
   div.textContent = text;
   el.appendChild(div);
-  const main = document.querySelector('main');
-  setTimeout(() => { main.scrollTop = main.scrollHeight; }, 40);
+  setTimeout(() => { window.scrollTo(0, document.documentElement.scrollHeight); }, 40);
   if (!/thinking/.test(role)) {
     pushChat(role === 'me' ? 'me' : (role === 'sys' ? 'sys' : 'ai'), text);
   }
@@ -1026,8 +1025,7 @@ function restoreChat() {
     div.textContent = m.text;
     el.appendChild(div);
   });
-  const main = document.querySelector('main');
-  setTimeout(() => { main.scrollTop = main.scrollHeight; }, 120);
+  setTimeout(() => { window.scrollTo(0, document.documentElement.scrollHeight); }, 120);
 }
 function parseLocal(text) {
   const t = text.trim();
@@ -1248,7 +1246,21 @@ function init() {
     addMsg('sys', '👋 欢迎使用！训练计划已就绪（每周四练 · Matt课程）\n说「练了上肢A」打卡 · 「体重80.5」记体重 · 「吃了午餐 600」记饮食 · 「今日状态」看汇总');
   }
   if (urlCfg && urlCfg.key) addMsg('sys', '✅ 已配置好 AI 教练（' + (D.settings.model || '') + '），随便聊两句试试～');
+  fixBottomLayout();
+  const ci = document.getElementById('chat-input');
+  if (ci && D.profile && D.profile.weight) ci.placeholder = '说点什么…例如「练了上肢A」「体重 ' + D.profile.weight + '」';
 }
+// 底部布局：输入栏精确让位于底部导航（含iPhone底部安全区），内容区留足滚动空间
+function fixBottomLayout() {
+  const nav = document.getElementById('tabs'), ib = document.getElementById('inputbar'), m = document.querySelector('main');
+  if (!nav || !ib) return;
+  const nh = nav.offsetHeight;
+  if (!nh || nh < 20) return;
+  ib.style.bottom = nh + 'px';
+  if (m) m.style.paddingBottom = (nh + (ib.offsetHeight || 60) + 16) + 'px';
+}
+window.addEventListener('resize', fixBottomLayout);
+window.addEventListener('orientationchange', function () { setTimeout(fixBottomLayout, 200); });
 init();
 
 // ==================== 手机键盘适配（键盘弹出时输入框跟随、隐藏底部导航） ====================
@@ -1258,9 +1270,10 @@ if (window.visualViewport) {
     const ib = document.getElementById('inputbar');
     const nav = document.getElementById('tabs');
     if (!ib || !nav) return;
+    const base = parseFloat(ib.style.bottom) || 56;
     const gap = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
     if (gap > 80) {
-      ib.style.transform = 'translateY(-' + Math.max(0, gap - 52) + 'px)';
+      ib.style.transform = 'translateY(-' + Math.max(0, gap - base) + 'px)';
       nav.style.display = 'none';
     } else {
       ib.style.transform = '';
