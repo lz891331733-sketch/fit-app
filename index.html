@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>健身减脂智能体 v1.2</title>
+<title>健身减脂智能体 v1.3</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f4f5f7;--card:#fff;--ink:#1a1d23;--sub:#6b7280;--line:#e9ebef;--blue:#2563eb;--blue2:#eff4ff;--orange:#ea580c;--orange2:#fff4ec;--green:#16a34a;--green2:#effaf1;--red:#dc2626;--red2:#fef2f2;--purple:#7c3aed}
@@ -117,8 +117,8 @@ details.sub[open] summary{margin-bottom:6px}
 <body>
 <div id="app">
   <header class="app">
-    <div class="t1">健身减脂智能体<span class="badge">Matt课程版 v1.2</span></div>
-    <div class="t2" id="hdr-sub">每周四练 · 减脂计划 · 数据全部本地存储</div>
+    <div class="t1">健身减脂智能体<span class="badge">Matt课程版 v1.3</span></div>
+    <div class="t2" id="hdr-sub">双分化AB · 每周四练 · 数据全部本地存储</div>
   </header>
 
   <main>
@@ -268,7 +268,7 @@ details.sub[open] summary{margin-bottom:6px}
 
   <div id="bottom-dock">
     <div class="inputbar" id="inputbar">
-      <input id="chat-input" placeholder="说点什么…例如「练了上肢A」「体重 81」" onkeydown="if(event.key==='Enter')sendChat()">
+      <input id="chat-input" placeholder="说点什么…例如「练了A计划」「体重 81」" onkeydown="if(event.key==='Enter')sendChat()">
       <button onclick="sendChat()">发送</button>
     </div>
     <nav class="tabs" id="tabs">
@@ -281,52 +281,18 @@ details.sub[open] summary{margin-bottom:6px}
   </div>
 </div>
 <script>
-/* ===== 训练库（Matt课程减脂计划）====== */
+/* ===== 训练库（Matt课程 · 双分化AB正式动作）====== */
 const TRAINING = {
-  upper_a: {
-    name: "上肢A（推+拉）",
-    muscles: "胸、肩、背、二头、三头",
-    calories: 400,
+  plan_a: {
+    name: "A计划（背+后束+髋+三头）",
+    muscles: "背、后束、臀腿后侧（髋）、三头",
+    calories: 420,
     exercises: [
-      {
-        id: "rot_bench_press",
-        name: "交替哑铃旋转卧推",
-        target: "胸大肌",
-        sets: 4,
-        reps: "8-10（左右算一个）",
-        rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
-        advancedWeight: "稳定后逐次加重",
-        steps: [
-          { name: "起始姿势", desc: "平躺屈膝踩实，双手持哑铃于胸上方。一个手在上面不动，另一边手落下来；推直后不一定是一字，也可能是小A字，以自己肩关节顺畅为准。", key: "一个手等、一个手动" },
-          { name: "发力执行", desc: "落的时候转、起的时候推：一边落到底，推起来；推直交代干净，再换另一边。向上推时伴随肩内旋，可更好募集前锯肌。", key: "落转起推、交代干净" },
-          { name: "节奏要点", desc: "左右交替，左右算一个。不要着急——这边还没推直，另一边别急着下来。", key: "左右算一个、别抢拍" }
-        ],
-        mistakes: ["错误：还没落就先转、还没起就先转 → 主次弄反", "错误：抢拍贪快 → 一边没推直另一边就下来，全乱套"],
-        tips: "为什么选它：杠铃只有一条线、会卡压关节；哑铃能调角度顺应肩关节，还能调左右胸不对称。课程D3·一级动作。"
-      },
-      {
-        id: "rot_shoulder_press",
-        name: "交替哑铃旋转推",
-        target: "三角肌前中束",
-        sets: 4,
-        reps: "8-10（每边）",
-        rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
-        advancedWeight: "稳定后逐次加重",
-        steps: [
-          { name: "起始姿势", desc: "手找在手肘的里边（想象肩膀痒、挠一下正好在的位置）；肘尖朝斜外侧，不是撇成90度，大约肩胛平面斜往前。大臂一定是垂直立面。", key: "手肘里边、肘尖斜外" },
-          { name: "发力执行", desc: "发力点在手掌根，感觉往天花板上去给；给上去，它压着我下来。左右交替。带上旋转——走直线费劲，旋转符合人体发力角度。", key: "掌根发力、往天花板给" },
-          { name: "变化调整", desc: "严重圆肩推不到头顶时：屁股往前坐、做成上斜版本即可（功能差的用上斜，功能好的可以往后）。", key: "圆肩→上斜版本" }
-        ],
-        mistakes: ["错误：肘撇成90度 → 关节卡压、力走直线费劲", "错误：起始位找错（手不在手肘里边）→ 整条路径全错"],
-        tips: "它既是正式训练，又是功能修复——圆肩问题可直接用它来调。课程D5·一级。"
-      },
       {
         id: "reverse_grip_pulldown",
         name: "反握下拉",
         target: "背阔肌（垂直拉）",
-        sets: 4,
+        sets: "2-4",
         reps: "8-12",
         rest: "90秒",
         beginnerWeight: "轻重量·先找发力点",
@@ -340,44 +306,78 @@ const TRAINING = {
         tips: "课程D1·一级。先把一级模式掌握，再进阶二级宽握、三级中握距。"
       },
       {
-        id: "seated_row",
-        name: "坐姿划船",
-        target: "背（水平拉）",
-        sets: 4,
+        id: "bb_row",
+        name: "杠铃划船",
+        target: "背阔肌（水平拉）",
+        sets: "2-4",
         reps: "8-12",
         rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
+        beginnerWeight: "反握肩宽·轻片起步",
         advancedWeight: "稳定后逐次加重",
         steps: [
-          { name: "起始姿势", desc: "坐稳握住把手。先明确哪儿发力：它拉我——它拉的方向就是发力点。", key: "它拉我→找发力点" },
-          { name: "发力执行", desc: "发力点先走：发力点往后，往后过程中身体跟着往后；往前回的时候身体跟着往前。背完全收满。", key: "发力点先走、背收满" },
-          { name: "版本选择", desc: "腰不动的版本（发力点走、腰不动、背收满）或腰跟着动的版本都可以。", key: "腰不动/跟着动都行" }
+          { name: "起始姿势", desc: "反手握杠（掌心朝前）、与肩同宽——反握只有这一个握距。俯身位置因人而异：屁股往后滑、顶住；没有统一标准，无痛为准。", key: "反握肩宽、俯身无定式" },
+          { name: "发力执行", desc: "杠铃蹭着腿走，拉起来。不要学运动员那种往上拽——那是运动员的练法。", key: "蹭着腿走、别往上拽" },
+          { name: "过渡路径", desc: "刚进健身房别急着俯身——先用器械坐姿划船过渡，省事安全，有把握了再上杠铃。", key: "先器械、后俯身" }
         ],
-        mistakes: ["错误：发力点还没动，先往后仰腰 → 背练一辈子练不着", "错误：手臂主导拉扯 → 发力点没主导"],
-        tips: "课程D1。判断标准：只要是发力点先动，做成什么样都是对的。"
+        mistakes: ["错误：照搬『过膝/胫骨中部』等统一位置 → 每个俯身位置都不一样，无痛为准", "错误：学运动员往上拉 → 普通人蹭着腿走就行"],
+        tips: "课程D1。男女通用基础动作；这套模式一百个普通人九十个这么练没毛病。"
       },
       {
-        id: "db_curl_half",
-        name: "哑铃弯举 · 下半程",
-        target: "肱二头肌",
-        sets: 3,
-        reps: "10-15",
+        id: "rear_delt_lift",
+        name: "后束提拉（A字）",
+        target: "三角肌后束",
+        sets: "3",
+        reps: "递增 · 每档约10次",
         rest: "60秒",
-        beginnerWeight: "轻重量",
+        beginnerWeight: "中轻重量 → 换重的（双递增）",
+        advancedWeight: "三递增（例：18→20→22.5）",
+        steps: [
+          { name: "角度选择", desc: "角度决定打哪儿：30度偏后束多（后束就用『三十度提拉』的口径）；45度中后束都有；60度偏中束。可手型微调：小手指略高 → 偏肩下沿线条。", key: "压低角度、30度偏后束" },
+          { name: "发力执行", desc: "提拉走直线（不是飞的弧线）；发力点在手指位置、主观往『天花板』给，上过程中自然往外；最高点时手一定在手肘的里边。", key: "直线提拉、手在手肘内侧" },
+          { name: "组次特别安排", desc: "提拉常规10-15个不够用——做递增：中轻重量10个 → 放回 → 换重一点再做10个左右到力竭（双递增）；进阶三递增；一般3组，别做4组。", key: "递增组、3组封顶" }
+        ],
+        mistakes: ["错误：手肘往两边撇 → 力全搂死、散了", "错误：按常规10-15个随便做 → 提拉必须做递增才够", "错误：做4组 → 太多、动作会跑"],
+        tips: "课程D5。推举是根基，练肩主打提拉；提拉不挑人，几乎都能受益（比侧平举划算）。"
+      },
+      {
+        id: "bb_rdl",
+        name: "杠铃罗马尼亚硬拉（RDL）",
+        target: "臀、腿后侧（髋主导）",
+        sets: "2-4",
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻片起步·先解锁膝再动胯",
         advancedWeight: "稳定后逐次加重",
         steps: [
-          { name: "起始姿势", desc: "站姿或坐姿持哑铃（掌心向前也行），举到与地面平行位置——这个位置已经收住了。", key: "只举到平行" },
-          { name: "发力执行", desc: "只做下半程：举一半，落；举一半，落。这半程是二头，上半程是小臂——所以别举高。", key: "只做下半程" },
-          { name: "找发力点", desc: "动作完成位置一放松，哑铃压着你下来——哑铃压你哪儿，就是哪儿发力。", key: "压哪儿=哪儿发力" }
+          { name: "起始姿势", desc: "两脚与胯同宽、脚尖来一点点外八字；杠铃贴近腿。每一下下落前，先解锁膝关节。", key: "先解锁膝、再走关系" },
+          { name: "发力执行", desc: "两个关系：①上下——微屈膝；②前后——屁股往后顶，顶到屁股没法再往后了，站起来。发力点先起（像多米诺骨牌：最远的先倒、剩下顺势），力向上走。", key: "屁股后顶到极限" },
+          { name: "安全闸门", desc: "屁股到极限就别再往下——再往下练的不是臀腿，是腰。跳级别硬上杠铃，腰疼是一定的；重量再急也不许越界。", key: "到极限即止" }
         ],
-        mistakes: ["错误：举太高做全程 → 上半程是小臂在使劲", "错误：练背长期徒手不用助力带 → 小臂抓握劲大，弯举就往小臂跑"],
-        tips: "课程D9。照这个模式练『绝对出不了错』，就下半程。"
+        mistakes: ["错误：『顶』的时候往下蹲（膝主动下蹲）→ 上下和前后弄反", "错误：腰先撅、发力点后动 → 动力链从中间断，腰疼", "错误：超过『屁股不能再后移』还往下 → 练腰了"],
+        tips: "课程D2（髋主导）。双分化髋日标准搭配＝硬拉＋臀冲；腰不舒服就换臀冲＋俯卧腿弯举。杠铃硬拉是髋主导三级、必做。"
+      },
+      {
+        id: "hip_thrust",
+        name: "臀冲",
+        target: "上臀",
+        sets: "2-4",
+        reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "自重/轻重量起步",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "背靠凳子（肩胛骨下角与凳边齐平）；脚等宽、与胯同宽，脚尖冲前；杠铃垫上垫子卡在骨盆上（压高一点——压低了穿过的是屁股中下）。", key: "肩胛齐凳边、垫子护骨盆" },
+          { name: "发力执行", desc: "下的时候它给我压下来，起的时候匀速往上顶，顶顶顶到头。", key: "匀速上顶到头" },
+          { name: "躯干节奏", desc: "躯干走『翘翘板式』——下落时躯干跟着走；下落拉开上臀，收缩本能就会往被拉开的位置走。", key: "翘翘板式、拉哪儿往哪儿走" }
+        ],
+        mistakes: ["错误：杠铃压得过低 → 练到屁股中下、上臀练不到", "错误：刻意外八字或用弹力带 → 瞎折腾"],
+        tips: "课程D2。核心：下落时拉的是哪儿，收缩就往哪儿走。"
       },
       {
         id: "tricep_pushdown",
-        name: "三头下压 · 90度",
+        name: "三头绳索下压",
         target: "肱三头肌（外侧头）",
-        sets: 3,
+        sets: "2-4",
         reps: "8-10",
         rest: "60秒",
         beginnerWeight: "轻重量",
@@ -392,50 +392,84 @@ const TRAINING = {
       }
     ]
   },
-  lower_a: {
-    name: "下肢A（髋+膝+腹）",
-    muscles: "臀、腿后侧、大腿前侧、腹",
-    calories: 430,
+  plan_b: {
+    name: "B计划（胸+肩+膝+二头）",
+    muscles: "胸、肩、大腿前侧（膝）、二头",
+    calories: 440,
     exercises: [
       {
-        id: "one_db_deadlift",
-        name: "单哑铃硬拉",
-        target: "臀、腿后侧",
-        sets: 4,
+        id: "bench_press",
+        name: "卧推",
+        target: "胸大肌（水平推）",
+        sets: "2-4",
+        reps: "6-8（第一个动作·重量大一点）",
+        rest: "90秒",
+        beginnerWeight: "空杆/轻片·肩上无压力为准",
+        advancedWeight: "目标：1倍体重（男性标准线）",
+        steps: [
+          { name: "握距", desc: "从肩宽再往外『一个拳头、两个拳头』，自己找——握距不是死的。判断只有一个：推的时候肩关节没压力。", key: "肩宽外一两拳、肩上无压力" },
+          { name: "落点与幅度", desc: "落下来、推起来。到标准重量之前、不疼就可以触胸；标准重量后幅度会变——别强行触胸（肩会往前挑、关节吃压力）。", key: "触胸看阶段、无痛优先" },
+          { name: "标准线", desc: "男性推到1倍体重（80kg的男推80kg），一两年达到；推1个极限也行、4-6个也行。没到标准前别纠结『小臂垂直』这类话术。", key: "目标=1倍体重" }
+        ],
+        mistakes: ["错误：强行全程触胸 → 肩往前挑、关节有压力", "错误：死磕『小臂垂直地面/大臂平行』→ 课程：都不需要，肩上没压力就完事"],
+        tips: "课程D3·三级。第一个动作、重量大一点、6-8次；常年8-12不好使。累了就降重量。"
+      },
+      {
+        id: "incline_db_press",
+        name: "上斜哑铃卧推",
+        target: "胸大肌上束",
+        sets: "2-4",
         reps: "8-12",
+        rest: "90秒",
+        beginnerWeight: "轻哑铃·先找落点",
+        advancedWeight: "稳定后逐次加重",
+        steps: [
+          { name: "起始姿势", desc: "上斜凳躺好、双手持哑铃于肩上方；开肘/夹肘怎么顺怎么来——宽窄相对自己找（女孩偏宽、男性宽窄都练），别刻意摆角度。", key: "躺着找顺、不摆角度" },
+          { name: "发力执行", desc: "推起来；放松让哑铃压着下来——落到下巴位置即可，不要再低。", key: "落下巴即止" },
+          { name: "幅度标准", desc: "幅度自己找：放松时看哑铃在哪儿即可。非触胸硬压——肩全压坏。", key: "不追求触胸" }
+        ],
+        mistakes: ["错误：追求全程压到底 → 肩关节压坏", "错误：刻意纠结开肘/夹肘角度 → 由宽度/角度自然决定"],
+        tips: "课程D3。与平板卧推平级；平板推到标准线之后再进上斜也不迟。上斜做上胸多。"
+      },
+      {
+        id: "db_rot_press",
+        name: "哑铃旋转推举",
+        target: "三角肌前中束",
+        sets: "2-4",
+        reps: "8-10（每边）",
         rest: "90秒",
         beginnerWeight: "轻重量·先找发力点",
         advancedWeight: "稳定后逐次加重",
         steps: [
-          { name: "起始姿势", desc: "一只哑铃竖着拿；两脚与胯同宽，脚尖来一点点外八字（一点点就够）。", key: "与胯同宽、微外八" },
-          { name: "发力执行", desc: "先做上下的关系——微微蹲一下；再做前后的关系——屁股往后顶，顶到臀没法再往后，然后站起来。", key: "上下一小步、屁股后顶" },
-          { name: "幅度标准", desc: "起落都在手指这个位置；向下、向后、站起来，就是一次。", key: "手指位起落" }
+          { name: "起始姿势", desc: "手找在手肘的里边（想象肩膀痒、挠一下正好在的位置）；肘尖朝斜外侧，不是撇成90度，大约肩胛平面斜往前。大臂一定是垂直立面。", key: "手肘里边、肘尖斜外" },
+          { name: "发力执行", desc: "发力点在手掌根，感觉往天花板上去给；给上去，它压着我下来。左右交替。带上旋转——走直线费劲，旋转符合人体发力角度。", key: "掌根发力、往天花板给" },
+          { name: "变化调整", desc: "严重圆肩推不到头顶时：屁股往前坐、做成上斜版本即可（功能差的用上斜，功能好的可以往后）。", key: "圆肩→上斜版本" }
         ],
-        mistakes: ["错误：顶的时候往下蹲 → 膝不是主动下蹲", "错误：超过『屁股不能再后移』继续下 → 练的就不是臀腿，是腰"],
-        tips: "课程D2·一级。别跳级直接上杠铃硬拉——跳级别腰疼是一定的。"
+        mistakes: ["错误：肘撇成90度 → 关节卡压、力走直线费劲", "错误：起始位找错（手不在手肘里边）→ 整条路径全错"],
+        tips: "课程D5·一级（交替式）。既是正式训练又是功能修复；顺了可升二级双侧旋转推。"
       },
       {
-        id: "hip_thrust",
-        name: "臀冲",
-        target: "上臀",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "自重/轻重量起步",
-        advancedWeight: "稳定后逐次加重",
+        id: "lateral_lift",
+        name: "中束提拉",
+        target: "三角肌中束",
+        sets: "3",
+        reps: "递增 · 每档约10次",
+        rest: "60秒",
+        beginnerWeight: "中轻重量 → 换重的（双递增）",
+        advancedWeight: "三递增（例：18→20→22.5）",
         steps: [
-          { name: "起始姿势", desc: "背靠凳子（肩胛骨下角与凳边齐平）；脚等宽、与胯同宽，脚尖冲前；杠铃垫上垫子卡在骨盆上（压高一点——压低了穿过的是屁股中下）。", key: "肩胛齐凳边、垫子护骨盆" },
-          { name: "发力执行", desc: "下的时候它给我压下来，起的时候匀速往上顶，顶顶顶到头。", key: "匀速上顶到头" },
-          { name: "躯干节奏", desc: "躯干走『翘翘板式』——下落时躯干跟着走；下落拉开上臀，收缩本能就会往被拉开的位置走。", key: "翘翘板式、拉哪儿往哪儿走" }
+          { name: "角度选择", desc: "角度决定打哪儿：60度偏中束多；45度中后束都有。做中束就把角度往上走；手型微调：大拇指略高 → 往上走、追肩饱满度（男性上下都得练）。", key: "抬高角度、60度偏中束" },
+          { name: "发力执行", desc: "提拉走直线（不是飞的弧线）；发力点在手指位置、主观往『天花板』给，上过程中自然往外；最高点时手一定在手肘的里边。", key: "直线提拉、手在手肘内侧" },
+          { name: "组次特别安排", desc: "常规10-15个不够用——做递增：中轻重量10个 → 放回 → 换重一点再做10个左右到力竭（双递增）；一般3组封顶。", key: "递增组、3组封顶" }
         ],
-        mistakes: ["错误：杠铃压得过低 → 练到屁股中下、上臀练不到", "错误：刻意外八字或用弹力带 → 瞎折腾"],
-        tips: "课程D2。核心：下落时拉的是哪儿，收缩就往哪儿走。"
+        mistakes: ["错误：手肘往两边撇 → 力散掉", "错误：跳步直接做飞（侧平举）→ 推和提拉没练明白就做飞，必带长斜方肌"],
+        tips: "课程D5。肩部进阶顺序：推 → 提拉 → 飞，不能跳步；提拉是练肩主打。"
       },
       {
         id: "split_squat",
         name: "交错蹲",
         target: "大腿前侧（单腿）",
-        sets: 4,
+        sets: "2-4",
         reps: "8-12",
         rest: "90秒",
         beginnerWeight: "徒手→轻重量",
@@ -452,7 +486,7 @@ const TRAINING = {
         id: "leg_press",
         name: "腿举 · 倒蹬（一次半）",
         target: "大腿（膝主导）",
-        sets: 3,
+        sets: "2-4",
         reps: "8-10（一次半）",
         rest: "90秒",
         beginnerWeight: "中等重量起步",
@@ -466,256 +500,21 @@ const TRAINING = {
         tips: "课程D4。膝盖不舒服时的退阶神器。"
       },
       {
-        id: "ab_combo_1",
-        name: "腹肌组合（旋转+卷腹）",
-        target: "腹内斜肌+腹直肌",
-        sets: 3,
-        reps: "各10-15",
-        rest: "组合间不休息",
-        beginnerWeight: "徒手→轻哑铃",
-        advancedWeight: "哑铃加重",
-        steps: [
-          { name: "起始姿势", desc: "一级哑铃旋转/转体：从退阶模式开始，先找幅度；坐姿卷腹：横着坐椅子、夹住哑铃（夹得住就行）。", key: "横坐椅子、夹哑铃" },
-          { name: "发力执行", desc: "旋转10-15个；一级做完不休息、马上接二级坐姿卷腹10-15个。坐姿卷腹：脚面往上给、躯干跟着走；落头往下落，不是往前落。", key: "一级接二级、不休息" },
-          { name: "节奏", desc: "先找幅度，有了幅度再找速度。", key: "先幅度后速度" }
-        ],
-        mistakes: ["错误：卷腹往前落头 → 应该往下落", "错误：竖着坐椅子 → 后期重量上不去、不稳定"],
-        tips: "课程D8。腹肌不追求大块，追硬度下的线条。"
-      }
-    ]
-  },
-  upper_b: {
-    name: "上肢B（胸肩背）",
-    muscles: "胸上束、肩、背、二头",
-    calories: 400,
-    exercises: [
-      {
-        id: "incline_bench",
-        name: "上斜卧推（宽/窄握）",
-        target: "胸大肌上束",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
-        advancedWeight: "稳定后逐次加重",
-        steps: [
-          { name: "起始姿势", desc: "上斜凳躺好握杆。宽握/窄握两个模式（宽窄是相对的，自己找）：宽握下落自然开肘、窄握自然夹肘——肘的角度由握距决定，不必刻意摆。", key: "握距定肘角" },
-          { name: "发力执行", desc: "推起来；放松让杆压着下来，落到下巴，不要再低。", key: "落下巴即止" },
-          { name: "幅度标准", desc: "幅度自己找：放松时看杆在哪儿即可。不要非触胸——非触胸肩全压坏。", key: "不追求触胸" }
-        ],
-        mistakes: ["错误：追求全程触胸 → 肩关节压坏", "错误：刻意纠结开肘/夹肘 → 由握距自然决定"],
-        tips: "课程D3。与平板杠铃平级；重量涨一阵子之后再选它。"
-      },
-      {
-        id: "db_fly",
-        name: "哑铃飞鸟",
-        target: "胸大肌（中缝）",
-        sets: 3,
-        reps: "12-15",
-        rest: "60秒",
-        beginnerWeight: "轻哑铃",
-        advancedWeight: "稳定后加重",
-        steps: [
-          { name: "起始姿势", desc: "平躺持哑铃于胸上方，掌心相对。记住：哑铃不是绳索——它只能往下给。", key: "哑铃只能往下给" },
-          { name: "发力执行", desc: "向下时自然而然往两边；向上时自然而然往里。不是还没往下呢、先往外撇。", key: "自然开合、不硬撇" },
-          { name: "安全要点", desc: "最低点时哑铃一定在手肘的里边——跑到错位处会掰肩、废肩关节。", key: "低位哑铃在手肘内侧" }
-        ],
-        mistakes: ["错误：还没下就先往外撇 → 顺序反了", "错误：最低点哑铃位置错位 → 掰肩"],
-        tips: "课程D3。上斜做上胸多、下斜凳做下胸多，可自行调整。"
-      },
-      {
-        id: "db_upright_row",
-        name: "哑铃提拉（递增组）",
-        target: "三角肌中束/后束",
-        sets: 3,
-        reps: "递增·每档10次",
-        rest: "60秒",
-        beginnerWeight: "中轻重量→加重（双递增）",
-        advancedWeight: "三递增",
-        steps: [
-          { name: "起始姿势", desc: "三个角度：30度偏后束、45度中后束都有、60度偏中束。从45度开始练。", key: "从45度开始" },
-          { name: "发力执行", desc: "提拉走直线（不是飞的弧线）；发力点往天花板上走，在上的过程中会自然而然往外。最高点时手一定在手肘的里边。", key: "走直线、发力点往上" },
-          { name: "组次安排", desc: "常规10-15个不够用，做递增：中轻重量10个→放回→换重一点的再做10个左右到力竭（双递增）；进阶可三递增。递增一般3组，不要4组。", key: "双递增、3组封顶" }
-        ],
-        mistakes: ["错误：手肘往两边撇 → 力搂死了、散了", "错误：做4组 → 太多、动作会跑"],
-        tips: "课程D5：推举是根基，练肩主打提拉。自己把哑铃放回架子（顺便多喘口气）。"
-      },
-      {
-        id: "lateral_raise",
-        name: "哑铃侧平举（递增）",
-        target: "三角肌中束",
-        sets: 3,
-        reps: "递增·轻→中等重量",
-        rest: "60秒",
-        beginnerWeight: "轻重量起步",
-        advancedWeight: "中等重量收尾到力竭",
-        steps: [
-          { name: "起始姿势", desc: "站姿持哑铃自然下垂；手肘微弯——不是从直臂开始（站好后往上『立』一下，手肘自然微弯）。", key: "手肘微弯起步" },
-          { name: "发力执行", desc: "想的是『发力点往上给，往上给』；最高点时手肘角度随动，让力臂变短。底下微直、上面微弯，三角肌上面才能收住。", key: "肘角随动、力臂变短" },
-          { name: "组次与角度", desc: "跟提拉一样做递增：轻重量→中等重量。站姿偏中束多；想要后束就俯一点。", key: "递增、俯身偏后束" }
-        ],
-        mistakes: ["错误：手肘锁死固定 → 最后收不满、到上面没劲", "错误：耸肩甩动借力 → 练不到中束"],
-        tips: "课程D5。肩部进阶顺序：推→提拉→飞，不能跳步。"
-      },
-      {
-        id: "wide_pulldown",
-        name: "宽握下拉",
-        target: "背阔肌（垂直拉）",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
-        advancedWeight: "稳定后逐次加重",
-        steps: [
-          { name: "起始姿势", desc: "宽握、尽量宽一点——不是固定的，在关节压力不大的情况下自己找。可微微仰一点头。", key: "宽握、自己找宽度" },
-          { name: "发力执行", desc: "往下拉、拉下来、回去；屈肘和肩胛骨都服务于发力点。", key: "服务于发力点" },
-          { name: "幅度标准", desc: "拉到下巴位置即可——手臂长的话到这个位置背已经收满；再往下肩胛骨就会翻，都是多余的。", key: "到下巴即止" }
-        ],
-        mistakes: ["错误：追求贴胸口 → 多余，会翻肩胛骨", "错误：套用『肩胛平面/60度』统一标准 → 幅度角度由发力点决定"],
-        tips: "课程D1·二级。动作完成位置一放松，自己就找着了。"
-      },
-      {
-        id: "one_db_row",
-        name: "单哑铃划船",
-        target: "背阔肌",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
-        advancedWeight: "稳定后逐次加重",
-        steps: [
-          { name: "起始姿势", desc: "一只手扶着台子（高度约与胯同宽，高一点低一点问题不大）；支撑手往肚脐中间位置摸、撑住；蹬地俯身、胳膊大概伸直。不做跪椅子上的版本。", key: "撑肚脐中央、不做跪姿" },
-          { name: "发力执行", desc: "起落、起落、起落——发力点主导。跟哑铃的距离自己调，太近会难受。", key: "起落发力点主导" },
-          { name: "圆肩调整", desc: "如果一拉就圆肩：把掌心微微往前转一点——别转过了，转过了肩膀不适。", key: "微转掌心修圆肩" }
-        ],
-        mistakes: ["错误：支撑手乱放 → 撑不稳、身体晃", "错误：掌心转过 → 肩不适"],
-        tips: "课程D2。台子高度自己舒服为准。"
-      },
-      {
-        id: "hammer_curl_combo",
-        name: "垂式弯举组合",
-        target: "肱二头肌+肱肌",
-        sets: 3,
-        reps: "各8-10（组合）",
+        id: "bb_curl_half",
+        name: "杠铃弯举 · 下半程",
+        target: "肱二头肌",
+        sets: "2-4",
+        reps: "10-15",
         rest: "60秒",
         beginnerWeight: "轻重量",
-        advancedWeight: "单独做可上大重量",
-        steps: [
-          { name: "起始姿势", desc: "哑铃垂式弯举：掌心相对；举起来正好到小臂垂直立面（垂式是全程）。", key: "垂式=全程掌心相对" },
-          { name: "发力执行", desc: "举的时候大臂一定是随着动的；发力点往上，往上的过程中自然而然它就动了。", key: "大臂随动、发力点往上" },
-          { name: "组合做法", desc: "修线条组合：先做垂式8-10个，紧接着做掌心向前哑铃弯举半程8-10个，各8-10个成组。", key: "垂式+半程成组" }
-        ],
-        mistakes: ["错误：用杠铃（固定角度）→ 手腕可能不舒服", "错误：重量贪大 → 修线条应该轻重量"],
-        tips: "课程D9。二头是垂直拉、水平拉的『进阶』——先把基础模式重量做上去再追细节。"
-      }
-    ]
-  },
-  lower_b: {
-    name: "下肢B（髋后链+蹲+腹）",
-    muscles: "臀、腿后侧、下背、大腿、腹",
-    calories: 420,
-    exercises: [
-      {
-        id: "double_db_deadlift",
-        name: "双哑铃硬拉 + 髋外展",
-        target: "臀、腿后侧",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
         advancedWeight: "稳定后逐次加重",
         steps: [
-          { name: "起始姿势", desc: "双手各持一哑铃——不是竖着拿，是A字形（低头看形成一定角度，每个人不一样）。双的脚尖冲前（单的才外八字）。", key: "A字持铃、脚尖冲前" },
-          { name: "发力执行", desc: "膝盖弯是上下的关系；屁股往后顶是前后的关系；然后站起来。注意力在手上——动作完成位置一放松，哑铃往下坠手，不是坠腰。", key: "注意力在手上" },
-          { name: "幅度与头位", desc: "屁股没法往后了就别再往下。微微仰一点头（按自己颈椎角度来，不要仰到难受）。", key: "微仰头、别死守一条线" }
+          { name: "起始姿势", desc: "站姿反握杠铃、与肩同宽，自然下垂；先找『手摁住的那个位置』。", key: "反握肩宽、找发力点" },
+          { name: "发力执行", desc: "只做下半程：举到与地面平行就收住——举一半、落，举一半、落。这半程是二头；上半程是小臂的活儿，别举高。", key: "只做下半程、别举高" },
+          { name: "验证方法", desc: "动作完成位置一放松，杠铃压着你下来——压你哪儿，就是哪儿发力；这个点往上、半程。", key: "压哪儿=哪儿发力" }
         ],
-        mistakes: ["错误：注意力放臀上 → 错，注意力在手上", "错误：死守『脊柱一条线』 → 普通会员容易腰出错"],
-        tips: "课程D2·二级。加练髋外展（器械，如健身房有）：双递增——20kg×10→25-30kg×10到力竭。臀中小肌是耐力肌，适合递增。"
-      },
-      {
-        id: "lying_leg_curl",
-        name: "俯卧腿弯举",
-        target: "腿后侧",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "轻重量·先找发力点",
-        advancedWeight: "稳定后逐次加重",
-        steps: [
-          { name: "器械调整", desc: "先看器械轴——与膝关节轴共轴，关节就没有压力；膝盖底下卡住；小腿垫调到合适位置（短了调远一点）。", key: "轴与膝关节共轴" },
-          { name: "发力点", desc: "趴好。放松时圆柱子把位置往下勾下来的那个点，就是发力点——注意力放在这个点。", key: "放松时被勾的点=发力点" },
-          { name: "执行", desc: "这个点把器械顶起来，器械顶着这个点下去；不用管这个动作练哪。", key: "点顶器械、器械压点" }
-        ],
-        mistakes: ["错误：轴与膝关节不共轴 → 关节有压力", "错误：找不到发力点 → 用『放松时器械往下勾的点』来找"],
-        tips: "课程D2。器械不会用可以问旁边的人——大多数人都友善。"
-      },
-      {
-        id: "bulgarian_split_squat",
-        name: "保加利亚蹲",
-        target: "大腿、臀部（单腿四级）",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "徒手→持哑铃",
-        advancedWeight: "稳定后加重",
-        steps: [
-          { name: "找距离", desc: "两种方法：①坐骨在凳子边上、前腿伸直脚跟着地；②手搭屁股、屁股往后找凳子边（比刚才往后一点），脚跟着地。自己试哪个舒服。", key: "两种找位法" },
-          { name: "发力执行", desc: "站上去、前腿起来，手持哑铃，下去、起。哑铃是自由重量只能上下走——主观上只做上下；客观上躯干一定前倾（但别主动往前趴）。", key: "主观上下、客观前倾" },
-          { name: "判断标准", desc: "主观上下、客观无痛、关节顺滑，就行了。", key: "无痛+顺滑" }
-        ],
-        mistakes: ["错误：主动往前趴 → 错", "错误：照搬别人的角度 → 每个人腿长比例不同"],
-        tips: "课程D4·单腿四级。网上90%博主只是分享自己经验，不能直接照搬角度。"
-      },
-      {
-        id: "box_squat",
-        name: "厢式深蹲",
-        target: "大腿、臀",
-        sets: 4,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "徒手→轻重量",
-        advancedWeight: "稳定后加重",
-        steps: [
-          { name: "起始姿势", desc: "站距与肩宽，微微外八字。找一把椅子，不要贴着——小腿与椅子留一点距离就行（也别走老远，会坐不上）。", key: "留一点距离" },
-          { name: "发力执行", desc: "不是垂直往下坐，是往斜后坐——像回家开电视往沙发上坐，『坐下来就不起来了』。", key: "往斜后坐" },
-          { name: "协调", desc: "髋膝同步，不要强行保持躯干垂直。", key: "髋膝同步" }
-        ],
-        mistakes: ["错误：垂直往下坐 → 应该往斜后坐", "错误：强行保持躯干垂直 → 没必要"],
-        tips: "课程D4·二级。股骨长的人做箱式蹲更得劲——它不考验身体比例。"
-      },
-      {
-        id: "back_extension",
-        name: "山羊挺身",
-        target: "下背、臀、腿后侧",
-        sets: 3,
-        reps: "8-12",
-        rest: "90秒",
-        beginnerWeight: "徒手/小片起步",
-        advancedWeight: "稳定后加难度",
-        steps: [
-          { name: "起始姿势", desc: "调椅子高低：卡在前面一摸有块骨头（髂前上棘）的位置——高点低点无所谓；脚后边顶住，注意安全。", key: "卡骨头位置、脚顶住" },
-          { name: "发力执行", desc: "不会发力就先拿小片做直臂版本：动作完成位置一放松，会拉你/坠你——那就是发力点。曲臂版本：身子起、同时拉，两者协同同时到位。", key: "给给给…落落落，协同" },
-          { name: "节奏", desc: "『给给给给给……落落落落落』——身子和拉的动作去协同。", key: "协同到位" }
-        ],
-        mistakes: ["错误：曲臂版本还没往上给、腰先顶 → 这就是错了", "错误：脚没顶住 → 不安全"],
-        tips: "课程D2。8到12次没毛病，后期再加难度。"
-      },
-      {
-        id: "ab_combo_2",
-        name: "腹肌组合（卷腹+绳索下拉）",
-        target: "腹直肌+腹外斜肌",
-        sets: 3,
-        reps: "各10-15",
-        rest: "组合间不休息",
-        beginnerWeight: "徒手→中等重量",
-        advancedWeight: "加重",
-        steps: [
-          { name: "起始姿势", desc: "坐姿卷腹：横坐椅子、夹住哑铃（可负重）；绳索下拉：绳索由高往低。", key: "横坐、绳索由高往低" },
-          { name: "发力执行", desc: "坐姿卷腹10-15（脚面往上给）；绳索下拉：膝关节也由高往低，动作完成位置做脊柱旋转、肩胛骨往下压。让手和躯干同时到最低、同时到最高。", key: "手与躯干同步到顶底" },
-          { name: "搭配逻辑", desc: "腹外斜不清晰时：先做三级（绳索）、再用中等重量做坐姿卷腹——先激活腹外斜，再走腹直肌。", key: "先激活腹外斜" }
-        ],
-        mistakes: ["错误：手还没动、身子先动 → 脊柱区没有抗阻", "错误：手和躯干不同步 → 不能同时到最低/最高"],
-        tips: "课程D8。组合推荐：一级+二级、二级+三级、一配三都行；不建议一二三全做（太花哨=强度不够）。"
+        mistakes: ["错误：举高做全程 → 二头小臂一起使劲，线条出不来", "错误：练背长期徒手不用助力带 → 小臂抓握劲变大，弯举往小臂跑"],
+        tips: "课程D9。照『下半程』练绝对出不了错；手臂统一10-15次；有助力带就上。"
       }
     ]
   }
@@ -762,10 +561,10 @@ function renderChatConfigTip() {
   const el = document.getElementById('chat-setup-tip');
   if (el) el.style.display = D.settings.apikey ? 'none' : 'block';
 }
-const DAYMAP = { 1: 'upper_a', 2: 'lower_a', 4: 'upper_b', 5: 'lower_b' };
-const ORDER = ['upper_a', 'lower_a', 'upper_b', 'lower_b'];
+const DAYMAP = { 1: 'plan_a', 2: 'plan_b', 4: 'plan_a', 5: 'plan_b' };
+const ORDER = ['plan_a', 'plan_b'];
 const WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-let curTrainDay = 'upper_a';
+let curTrainDay = 'plan_a';
 function today() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
 // ==================== 视图切换 ====================
@@ -822,7 +621,7 @@ function renderTrain() {
 
   const t = TRAINING[curTrainDay];
   let p = `<div class="card"><h3>${t.name} <span class="r">${t.muscles}</span></h3>
-    <div class="tiny" style="margin-bottom:11px">组次口径：每动作 3-4 组 × 8-15 次（腹肌/手臂 10-15 次）· 动作级别一级→三级递进 · 点卡片看要领</div>`;
+    <div class="tiny" style="margin-bottom:11px">组次口径：每动作 2-4 组 × 8-12 次为主（范围 6-15）· 标「递增」的动作按递增组做 · 点卡片看要领</div>`;
   t.exercises.forEach((ex, i) => {
     p += `<div class="ex" id="ex-${i}">
       <div class="top" onclick="toggleEx(${i})">
@@ -839,7 +638,7 @@ function renderTrain() {
       </div>
     </div>`;
   });
-  p += `<div class="tiny" style="margin-top:4px">带 ★ 提示的动作如健身房的器械找不到，用同肌群动作替代即可</div></div>`;
+  p += `<div class="tiny" style="margin-top:4px">找不到器械时，用同肌群动作替代即可</div></div>`;
   document.getElementById('train-plan').innerHTML = p;
 
   const hist = D.trainingRecords.slice().reverse().slice(0, 12);
@@ -1079,7 +878,7 @@ document.addEventListener('change', e => {
 // ==================== 对话模块 ====================
 let chat = [];
 function renderChatQuick() {
-  const qs = ['练了上肢A', '练了下肢A', '体重 ', '今日状态', '减脂要点'];
+  const qs = ['练了A计划', '练了B计划', '体重 ', '今日状态', '减脂要点'];
   document.getElementById('chat-quick').innerHTML = qs.map(q =>
     `<button onclick="quickFill('${q}')">${q.trim() || q}</button>`).join('');
 }
@@ -1113,14 +912,8 @@ function restoreChat() {
 }
 function parseLocal(text) {
   const t = text.trim();
-  let m = t.match(/练[了完]\s*(上肢A|上肢a|下肢A|下肢a|上肢B|上肢b|下肢B|下肢b)/);
-  if (m) { const map = { '上肢a': 'upper_a', '下肢a': 'lower_a', '上肢b': 'upper_b', '下肢b': 'lower_b' }; return { act: 'checkin', type: map[m[1].toLowerCase()] }; }
-  if (/打卡|练完/.test(t) && /上肢|下肢/.test(t)) {
-    if (/上肢\s*A|上肢a/i.test(t)) return { act: 'checkin', type: 'upper_a' };
-    if (/下肢\s*A|下肢a/i.test(t)) return { act: 'checkin', type: 'lower_a' };
-    if (/上肢\s*B|上肢b/i.test(t)) return { act: 'checkin', type: 'upper_b' };
-    if (/下肢\s*B|下肢b/i.test(t)) return { act: 'checkin', type: 'lower_b' };
-  }
+  let m = t.match(/练[了完]\s*([ABab])\s*计划/) || t.match(/([ABab])\s*计划[^，。；！？]{0,8}?(?:练完|练了|打卡|完成|搞定)/) || t.match(/练[了完]\s*([ABab])(?:了|啦|！|!|。|，|,|\s|$)/);
+  if (m) return { act: 'checkin', type: 'plan_' + m[1].toLowerCase() };
   // 疑问句保护：带疑问特征的话不做"记录类"匹配，交给 AI / 状态兜底
   const isQ = /[?？]|多少|怎么|为什么|吗|能不能|可不可以|建议|推荐|帮我算|算一下|够不够|超标/.test(t);
   if (!isQ) {
@@ -1170,11 +963,11 @@ async function sendChat() {
     if (local.act === 'rules') { addMsg('ai', RULES_TEXT); return; }
   }
   if (/练[了完]/.test(text)) {
-    addMsg('ai', '记哪个训练？说完整一点：\n· 练了上肢A（推+拉）\n· 练了下肢A（髋+膝）\n· 练了上肢B（胸肩背）\n· 练了下肢B（后链+蹲）');
+    addMsg('ai', '记哪个训练？说完整一点：\n· 练了A计划（背+后束+髋+三头）\n· 练了B计划（胸+肩+膝+二头）');
     return;
   }
   if (!D.settings.apikey) {
-    addMsg('ai', '还没配置 AI（设置→AI对话配置，支持 Agnes/DeepSeek）。\n\n先给你当前数据：\n\n' + statusText() + '\n这些指令随时可用：「练了上肢A」「体重72.5」「吃了午餐 600」「减脂要点」');
+    addMsg('ai', '还没配置 AI（设置→AI对话配置，支持 Agnes/DeepSeek）。\n\n先给你当前数据：\n\n' + statusText() + '\n这些指令随时可用：「练了A计划」「体重72.5」「吃了午餐 600」「减脂要点」');
     return;
   }
   await aiRespond(text);
@@ -1210,7 +1003,7 @@ function buildSysPrompt() {
   if (af.length) ctx += `\n【今日已吃】${af.map(f => f.meal + f.kcal + 'kcal').join('、')}；`;
   const stk = calcStreak();
   if (stk > 0) ctx += `\n【坚持】已连续 ${stk} 周达成每周≥2练；`;
-  ctx += `\n【计划】每周四练：周一上肢A(推+拉)/周二下肢A(髋+膝+腹)/周四上肢B(胸肩背)/周五下肢B(后链+蹲+腹)。每动作3-4组×8-15次。`;
+  ctx += `\n【计划】双分化AB（每周四练、A/B交替）：A计划＝背+后束+髋后链+三头；B计划＝胸+肩+膝+二头。每动作2-4组×8-12次为主（范围6-15）。`;
   ctx += `\n【减脂口径】每日赤字400-500；碳水100-120g；蛋白1.5g/kg；一顿无碳水；零食跟正餐；不要少吃多餐；减脂2-4周+缓冲1-2周。`;
   return `你是主人的专属健身教练+营养师，基于Matt肌肉训练课程体系（每周四练减脂计划）。${ctx}\n回答要简洁直接（手机屏幕），给结论和可执行建议，不啰嗦、不堆砌。涉及训练/饮食时严格按上述课程口径。`;
 }
@@ -1325,24 +1118,24 @@ function renderAll() {
   renderTrain(); renderDash(); renderDiet(); renderSettings(); renderChatConfigTip();
   const tag = document.getElementById('hdr-sub');
   const lw = latestWeight();
-  tag.textContent = (lw ? '当前 ' + lw + ' kg · ' : '') + '每周四练减脂计划 · Matt课程体系';
+  tag.textContent = (lw ? '当前 ' + lw + ' kg · ' : '') + '双分化AB · 每周四练 · Matt课程体系';
 }
 function init() {
   load();
   const urlCfg = applyUrlConfig();
   const wd = new Date().getDay();
-  curTrainDay = DAYMAP[wd] || 'upper_a';
+  curTrainDay = DAYMAP[wd] || 'plan_a';
   renderChatQuick();
   renderAll();
   if ((D.chatLog || []).length) {
     restoreChat();
   } else {
-    addMsg('sys', '👋 欢迎使用！训练计划已就绪（每周四练 · Matt课程）\n说「练了上肢A」打卡 · 「体重80.5」记体重 · 「吃了午餐 600」记饮食 · 「今日状态」看汇总');
+    addMsg('sys', '👋 欢迎使用！训练计划已就绪（双分化AB · 每周四练 · Matt课程）\n说「练了A计划」打卡 · 「体重80.5」记体重 · 「吃了午餐 600」记饮食 · 「今日状态」看汇总');
   }
   if (urlCfg && urlCfg.key) addMsg('sys', '✅ 已配置好 AI 教练（' + (D.settings.model || '') + '），随便聊两句试试～');
   fixBottomLayout();
   const ci = document.getElementById('chat-input');
-  if (ci && D.profile && D.profile.weight) ci.placeholder = '说点什么…例如「练了上肢A」「体重 ' + D.profile.weight + '」';
+  if (ci && D.profile && D.profile.weight) ci.placeholder = '说点什么…例如「练了A计划」「体重 ' + D.profile.weight + '」';
 }
 // 底部布局：内容区底部留白 = 底部停靠区实际高度（输入栏+导航，含iPhone安全区）
 function fixBottomLayout() {
